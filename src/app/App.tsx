@@ -1,97 +1,57 @@
-import { useState } from "react";
-import { WaterLevelCard } from "./components/WaterLevelCard";
-import { AlertCard } from "./components/AlertCard";
-import { StatsCard } from "./components/StatsCard";
-import { Button } from "./components/ui/button";
 import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { NavBar } from "./components/NavBar";
+import { Login } from "./pages/Login";
+import { Dashboard } from "./pages/Dashboard";
+import { Details } from "./pages/Details";
+import { Monitoring } from "./pages/Monitoring";
+import { Admin } from "./pages/Admin";
+import { UserManagement } from "./pages/UserManagement";
+import { Summary } from "./pages/Summary";
+import { Configuration } from "./pages/Configuration";
 
 // Main app for the Flood Monitoring System
-// This is the single screen required for Lab Activity 2 and 3
+// now responsible for routing between multiple screens
+// split App into router wrapper and content so we can read location
 export default function App() {
-  // UI state: show/hide alerts (Lab 3: interaction)
-  const [showAlerts, setShowAlerts] = useState(true);
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
 
-  // System data (Lab 2: dynamic data)
-  // These arrays can be changed to update the UI
-  const stats = [
-    {
-      label: "Total Locations",
-      value: "3",
-      icon: <img src="/location.png" alt="Location" className="app__location-icon" />,
-    },
-    { label: "Active Alerts", value: "2", icon: "\u26A0\uFE0F" },
-    { label: "Safe Areas", value: "1", icon: "\u2705" },
-  ];
-  const waterLevels = [
-    { locationName: "Cagayan De Oro River", currentLevel: 8.0, maxLevel: 10.0, status: "Danger" },
-    { locationName: "Bigaan River", currentLevel: 4.1, maxLevel: 8.0, status: "Safe" },
-    { locationName: "Bitan-ag Creek", currentLevel: 7.0, maxLevel: 10.0, status: "Warning" },
-  ];
-  const alerts = [
-    { title: "High Water Level", message: "Central Dam water level is approaching maximum capacity.", type: "danger" },
-    { title: "Heavy Rainfall Expected", message: "Weather forecast shows heavy rain in the next 6 hours.", type: "warning" },
-    { title: "Tsunami Alert", message: "Tsunami warning issued for coastal areas.", type: "danger" },
-  ];
-
-  // Toggle alerts (Lab 3: interaction)
-  const toggleAlerts = () => setShowAlerts((v) => !v);
+function AppContent() {
+  const location = useLocation();
 
   return (
-    <div className="app">
-      <header className="app__header">
-        <h1 className="app__title">Flood Monitoring System</h1>
-        <p className="app__subtitle">Real-time water level monitoring and alerts</p>
-      </header>
+    <>
+      {/* only show nav when not on login screen */}
+      {location.pathname !== "/login" && <NavBar />}
 
-      <main className="app__main">
-        <section className="app__section">
-          <h2 className="app__section-title">Overview Statistics</h2>
-          <div className="app__stats-grid">
-            {stats.map((stat, i) => (
-              <StatsCard key={i} label={stat.label} value={stat.value} icon={stat.icon} />
-            ))}
-          </div>
-        </section>
+      <Routes>
+        {/* authentication screen */}
+        <Route path="/login" element={<Login />} />
 
-        <section className="app__section">
-          <h2 className="app__section-title">Water Levels by Location</h2>
-          <div className="app__water-grid">
-            {waterLevels.map((loc, i) => (
-              <WaterLevelCard key={i} {...loc} />
-            ))}
-          </div>
-        </section>
+        {/* dashboard acts as the home screen after login */}
+        <Route path="/dashboard" element={<Dashboard />} />
 
-        <section className="app__section">
-          <div className="app__alerts-header">
-            <h2 className="app__section-title app__section-title--no-margin">Active Alerts</h2>
-            <Button onClick={toggleAlerts} variant="outline">
-              {showAlerts ? "Hide Alerts" : "Show Alerts"}
-            </Button>
-          </div>
-          {showAlerts && (
-            <div className="app__alerts-grid">
-              {alerts.map((alert, i) => (
-                <AlertCard key={i} {...alert} />
-              ))}
-            </div>
-          )}
-        </section>
+        {/* sub‑views off of the dashboard */}
+        <Route path="/details" element={<Details />} />
+        <Route path="/monitoring" element={<Monitoring />} />
 
-        <section className="app__help">
-          <h3 className="app__help-title">How to Use</h3>
-          <ul className="app__help-list">
-            <li>Check water levels at different locations</li>
-            <li>Monitor active alerts for dangerous situations</li>
-            <li>Green = Safe, Yellow = Warning, Red = Danger</li>
-            <li>Click "Hide/Show Alerts" to toggle alerts</li>
-          </ul>
-        </section>
-      </main>
+        {/* administrative section */}
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/users" element={<UserManagement />} />
 
-      <footer className="app__footer">
-        Flood Monitoring System - Laboratory Activity #3
-      </footer>
-    </div>
+        {/* summary/configuration flows */}
+        <Route path="/summary" element={<Summary />} />
+        <Route path="/configuration" element={<Configuration />} />
+
+        {/* redirect bare root to login as well as any unknown URL */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </>
   );
 }
