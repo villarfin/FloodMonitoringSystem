@@ -6,6 +6,7 @@ import { AlertCard } from "../components/AlertCard";
 import { ScreenLayout } from "../components/ScreenLayout";
 import { StatsCard } from "../components/StatsCard";
 import { WaterLevelCard } from "../components/WaterLevelCard";
+import { WeatherPanel } from "../components/WeatherPanel";
 import { monitoredWaters } from "../data/monitoredWaters";
 import { RootStackParamList } from "../types";
 import { colors } from "../styles/theme";
@@ -49,6 +50,9 @@ export function DashboardScreen() {
       {featuredWaters.map((loc) => (
         <WaterLevelCard key={loc.id} {...loc} />
       ))}
+
+      <Text style={styles.sectionTitle}>Weather</Text>
+      <WeatherPanel alerts={alerts} onOpenAlerts={() => setShowAlerts(true)} />
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Active Alerts</Text>
@@ -103,4 +107,3 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 });
-
