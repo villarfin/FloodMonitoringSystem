@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { MonitoredWater } from "../types";
 import { MobileCard } from "./MobileCard";
@@ -7,7 +8,9 @@ import { colors } from "../styles/theme";
 type WaterLevelCardProps = Pick<
   MonitoredWater,
   "locationName" | "currentLevel" | "maxLevel" | "status" | "imageSource"
->;
+> & {
+  expandedContent?: ReactNode;
+};
 
 export function WaterLevelCard({
   locationName,
@@ -15,6 +18,7 @@ export function WaterLevelCard({
   maxLevel,
   status,
   imageSource,
+  expandedContent,
 }: WaterLevelCardProps) {
   const percentage = Math.max(0, Math.min((currentLevel / maxLevel) * 100, 100));
   const fillColor =
@@ -33,6 +37,7 @@ export function WaterLevelCard({
         <View style={[styles.progressFill, { width: `${percentage}%`, backgroundColor: fillColor }]} />
       </View>
       <Text style={styles.percentText}>{percentage.toFixed(0)}% of max capacity</Text>
+      {expandedContent ? <View style={styles.expandedWrap}>{expandedContent}</View> : null}
     </MobileCard>
   );
 }
@@ -81,5 +86,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: colors.textMuted,
     fontSize: 12,
+  },
+  expandedWrap: {
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
 });

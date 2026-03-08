@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { ScreenLayout } from "../components/ScreenLayout";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { monitoredWaters } from "../data/monitoredWaters";
@@ -18,19 +18,22 @@ export function MonitoringScreen() {
             onPress={() => setSelectedId((current) => (current === location.id ? "" : location.id))}
             style={[styles.wrap, isActive && styles.wrapActive]}
           >
-            <WaterLevelCard {...location} />
-            {isActive ? (
-              <View style={styles.detailCard}>
-                <Image source={location.imageSource} style={styles.detailImage} />
-                <Text style={styles.detailText}><Text style={styles.bold}>Type:</Text> {location.locationType}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Trend:</Text> {location.trend}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Barangay:</Text> {location.barangay}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Municipality:</Text> {location.municipality}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Sensor ID:</Text> {location.sensorId}</Text>
-                <Text style={styles.detailText}><Text style={styles.bold}>Last Updated:</Text> {location.lastUpdated}</Text>
-                <Text style={styles.detailNotes}>{location.notes}</Text>
-              </View>
-            ) : null}
+            <WaterLevelCard
+              {...location}
+              expandedContent={
+                isActive ? (
+                  <View>
+                    <Text style={styles.detailText}><Text style={styles.bold}>Type:</Text> {location.locationType}</Text>
+                    <Text style={styles.detailText}><Text style={styles.bold}>Trend:</Text> {location.trend}</Text>
+                    <Text style={styles.detailText}><Text style={styles.bold}>Barangay:</Text> {location.barangay}</Text>
+                    <Text style={styles.detailText}><Text style={styles.bold}>Municipality:</Text> {location.municipality}</Text>
+                    <Text style={styles.detailText}><Text style={styles.bold}>Sensor ID:</Text> {location.sensorId}</Text>
+                    <Text style={styles.detailText}><Text style={styles.bold}>Last Updated:</Text> {location.lastUpdated}</Text>
+                    <Text style={styles.detailNotes}>{location.notes}</Text>
+                  </View>
+                ) : undefined
+              }
+            />
           </Pressable>
         );
       })}
@@ -45,21 +48,6 @@ const styles = StyleSheet.create({
   },
   wrapActive: {
     backgroundColor: "#f0f7ff",
-  },
-  detailCard: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
-    padding: 12,
-    marginTop: -6,
-    marginBottom: 8,
-  },
-  detailImage: {
-    width: "100%",
-    height: 130,
-    borderRadius: 10,
-    marginBottom: 10,
   },
   detailText: {
     color: colors.textMuted,
