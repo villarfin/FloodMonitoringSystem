@@ -17,13 +17,4 @@ export const initialNotifications: NotificationItem[] = [
     time: "08:12",
     isRead: false,
   },
-  {
-    id: "n3",
-    title: "Heavy Rainfall Forecast",
-    message: "Weather system predicts intense rain in 2 hours.",
-    type: "Rainfall",
-    time: "07:55",
-    isRead: true,
-  },
 ];
-

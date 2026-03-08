@@ -3,40 +3,69 @@ import { Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { ScreenLayout } from "../components/ScreenLayout";
 import { MobileCard } from "../components/MobileCard";
 import { initialNotifications } from "../data/notifications";
+import { useMobileWeather } from "../hooks/useMobileWeather";
+import { deriveMobileWeatherAlerts } from "../utils/weatherAlerts";
 import { NotificationItem, NotificationType } from "../types";
 import { colors } from "../styles/theme";
 
 export function NotificationsScreen() {
+  const { status, payload } = useMobileWeather();
   const [items, setItems] = useState<NotificationItem[]>(initialNotifications);
+  const [readOverrides, setReadOverrides] = useState<Record<string, boolean>>({});
   const [filterType, setFilterType] = useState<"All" | NotificationType>("All");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
 
+  const liveWeatherItems = useMemo<NotificationItem[]>(() => {
+    if (!payload) return [];
+    return deriveMobileWeatherAlerts(payload).map((alert) => ({
+      id: `live-${alert.id}`,
+      title: `[Live Weather] ${alert.title}`,
+      message: alert.message,
+      type: alert.type === "danger" ? "Flood" : "Rainfall",
+      time: new Date(payload.observedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      isRead: false,
+    }));
+  }, [payload]);
+
+  const mergedItems = useMemo(() => {
+    return [...liveWeatherItems, ...items].map((item) => ({
+      ...item,
+      isRead: readOverrides[item.id] ?? item.isRead,
+    }));
+  }, [items, liveWeatherItems, readOverrides]);
+
   const filteredItems = useMemo(
     () =>
-      items.filter((item) => {
+      mergedItems.filter((item) => {
         const typeOk = filterType === "All" || item.type === filterType;
         const unreadOk = !showUnreadOnly || !item.isRead;
         return typeOk && unreadOk;
       }),
-    [items, filterType, showUnreadOnly],
+    [mergedItems, filterType, showUnreadOnly],
   );
 
-  const unreadCount = items.filter((item) => !item.isRead).length;
+  const unreadCount = mergedItems.filter((item) => !item.isRead).length;
 
   const toggleRead = (id: string) => {
-    setItems((previous) =>
-      previous.map((item) => (item.id === id ? { ...item, isRead: !item.isRead } : item)),
-    );
+    setReadOverrides((previous) => ({
+      ...previous,
+      [id]: !(previous[id] ?? mergedItems.find((item) => item.id === id)?.isRead ?? false),
+    }));
   };
 
   const markAllAsRead = () => {
-    setItems((previous) => previous.map((item) => ({ ...item, isRead: true })));
+    const updates: Record<string, boolean> = {};
+    mergedItems.forEach((item) => {
+      updates[item.id] = true;
+    });
+    setReadOverrides((previous) => ({ ...previous, ...updates }));
   };
 
   const clearAll = () => setItems([]);
 
   return (
     <ScreenLayout title="Notifications" subtitle="Manage tsunami/flood alerts and read state.">
+      <Text style={styles.liveText}>Live weather feed: <Text style={styles.liveValue}>{status === "loading" ? "Updating..." : "Synced"}</Text></Text>
       <Text style={styles.label}>Filter Type</Text>
       <View style={styles.filtersRow}>
         {["All", "Tsunami", "Flood", "Rainfall"].map((value) => {
@@ -91,6 +120,14 @@ export function NotificationsScreen() {
 }
 
 const styles = StyleSheet.create({
+  liveText: {
+    color: colors.textMuted,
+    marginBottom: 8,
+  },
+  liveValue: {
+    color: colors.brand,
+    fontWeight: "700",
+  },
   label: {
     color: colors.text,
     fontWeight: "700",
@@ -203,4 +240,3 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
-

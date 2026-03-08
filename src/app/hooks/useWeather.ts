@@ -166,6 +166,14 @@ export function useWeather() {
     loadWeather();
   }, [loadWeather]);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      loadWeather();
+    }, 300000);
+
+    return () => window.clearInterval(intervalId);
+  }, [loadWeather]);
+
   return {
     status,
     errorMessage,
@@ -175,4 +183,3 @@ export function useWeather() {
     usePreciseLocation,
   };
 }
-

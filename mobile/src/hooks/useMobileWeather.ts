@@ -99,5 +99,13 @@ export function useMobileWeather() {
     loadWeather();
   }, [loadWeather]);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      loadWeather();
+    }, 300000);
+
+    return () => clearInterval(intervalId);
+  }, [loadWeather]);
+
   return { status, error, payload, locationName, loadWeather };
 }
