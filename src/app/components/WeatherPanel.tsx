@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useWeather } from "../hooks/useWeather";
 import { ActiveAlert } from "../data/activeAlerts";
+import { deriveWeatherAlerts } from "../utils/weatherAlerts";
 import "../styles/components/WeatherPanel.css";
 
 type MetricType = "temperature" | "precipitation" | "wind";
@@ -39,14 +40,18 @@ function formatDay(value: string): string {
 }
 
 interface WeatherPanelProps {
-  activeAlerts: ActiveAlert[];
   onOpenAlerts: () => void;
+  onWeatherAlertsChange: (alerts: ActiveAlert[]) => void;
 }
 
-export function WeatherPanel({ activeAlerts, onOpenAlerts }: WeatherPanelProps) {
+export function WeatherPanel({ onOpenAlerts, onWeatherAlertsChange }: WeatherPanelProps) {
   const { status, errorMessage, locationName, payload, loadWeather, usePreciseLocation } = useWeather();
   const [metric, setMetric] = useState<MetricType>("temperature");
-  const weatherLinkedAlerts = activeAlerts.filter((alert) => alert.type !== "info");
+  const weatherLinkedAlerts = useMemo(() => (payload ? deriveWeatherAlerts(payload) : []), [payload]);
+
+  useEffect(() => {
+    onWeatherAlertsChange(weatherLinkedAlerts);
+  }, [onWeatherAlertsChange, weatherLinkedAlerts]);
 
   const chartSeries = useMemo(() => {
     if (!payload) return [];

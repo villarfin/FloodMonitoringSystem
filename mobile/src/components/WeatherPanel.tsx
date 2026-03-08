@@ -1,34 +1,41 @@
+import { useEffect, useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MobileCard } from "./MobileCard";
+import { ActiveAlert } from "../data/activeAlerts";
+import { useMobileWeather } from "../hooks/useMobileWeather";
+import { deriveMobileWeatherAlerts, getMobileWeatherLabel } from "../utils/weatherAlerts";
 import { colors } from "../styles/theme";
 
-interface WeatherAlert {
-  id: string;
-  title: string;
-  type: "warning" | "danger" | "info";
-}
-
 interface WeatherPanelProps {
-  alerts: WeatherAlert[];
+  onWeatherAlertsChange: (alerts: ActiveAlert[]) => void;
   onOpenAlerts: () => void;
 }
 
-export function WeatherPanel({ alerts, onOpenAlerts }: WeatherPanelProps) {
-  const weatherLinkedAlerts = alerts.filter((item) => item.type === "warning" || item.type === "danger");
+export function WeatherPanel({ onWeatherAlertsChange, onOpenAlerts }: WeatherPanelProps) {
+  const { status, error, payload, locationName, loadWeather } = useMobileWeather();
+  const weatherLinkedAlerts = useMemo(() => (payload ? deriveMobileWeatherAlerts(payload) : []), [payload]);
+
+  useEffect(() => {
+    onWeatherAlertsChange(weatherLinkedAlerts);
+  }, [onWeatherAlertsChange, weatherLinkedAlerts]);
 
   return (
     <MobileCard>
       <Text style={styles.label}>Results for</Text>
-      <Text style={styles.location}>Current Location</Text>
+      <Text style={styles.location}>{locationName}</Text>
       <View style={styles.row}>
-        <Text style={styles.temp}>27C</Text>
+        <Text style={styles.temp}>{Math.round(payload?.temperature ?? 0)}C</Text>
         <View>
-          <Text style={styles.metric}>Precipitation: 0%</Text>
-          <Text style={styles.metric}>Humidity: 91%</Text>
-          <Text style={styles.metric}>Wind: 2 km/h</Text>
+          <Text style={styles.metric}>Precipitation: {Math.round(payload?.hourlyPrecipPeak ?? 0)}%</Text>
+          <Text style={styles.metric}>Humidity: {Math.round(payload?.humidity ?? 0)}%</Text>
+          <Text style={styles.metric}>Wind: {Math.round(payload?.windSpeed ?? 0)} km/h</Text>
         </View>
       </View>
-      <Text style={styles.weatherText}>Weather: Cloudy</Text>
+      <Text style={styles.weatherText}>Weather: {getMobileWeatherLabel(payload?.weatherCode ?? 0)}</Text>
+      {status === "error" ? <Text style={styles.errorText}>{error}</Text> : null}
+      <Pressable onPress={loadWeather}>
+        <Text style={styles.link}>Refresh</Text>
+      </Pressable>
 
       <View style={styles.linkedRow}>
         <Text style={styles.linkedTitle}>Weather-linked Active Alerts</Text>
@@ -92,5 +99,8 @@ const styles = StyleSheet.create({
     color: colors.brand,
     fontWeight: "700",
   },
+  errorText: {
+    color: colors.danger,
+    marginTop: 6,
+  },
 });
-

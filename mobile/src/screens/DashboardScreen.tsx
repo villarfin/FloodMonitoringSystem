@@ -7,7 +7,7 @@ import { ScreenLayout } from "../components/ScreenLayout";
 import { StatsCard } from "../components/StatsCard";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { WeatherPanel } from "../components/WeatherPanel";
-import { activeAlerts } from "../data/activeAlerts";
+import { ActiveAlert, activeAlerts as seedAlerts } from "../data/activeAlerts";
 import { monitoredWaters } from "../data/monitoredWaters";
 import { RootStackParamList } from "../types";
 import { colors } from "../styles/theme";
@@ -15,6 +15,7 @@ import { colors } from "../styles/theme";
 export function DashboardScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showAlerts, setShowAlerts] = useState(true);
+  const [weatherAlerts, setWeatherAlerts] = useState<ActiveAlert[]>([]);
 
   const featuredWaters = monitoredWaters.slice(0, 3);
   const safeCount = monitoredWaters.filter((item) => item.status === "Safe").length;
@@ -28,6 +29,9 @@ export function DashboardScreen() {
     ],
     [alertCount, safeCount],
   );
+
+  const nonWeatherAlerts = seedAlerts.filter((alert) => alert.id !== "a2");
+  const alerts = [...nonWeatherAlerts, ...weatherAlerts];
 
   return (
     <ScreenLayout title="Dashboard" subtitle="Real-time water level monitoring and alerts">
@@ -47,7 +51,7 @@ export function DashboardScreen() {
       ))}
 
       <Text style={styles.sectionTitle}>Weather</Text>
-      <WeatherPanel alerts={activeAlerts} onOpenAlerts={() => setShowAlerts(true)} />
+      <WeatherPanel onWeatherAlertsChange={setWeatherAlerts} onOpenAlerts={() => setShowAlerts(true)} />
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Active Alerts</Text>
@@ -56,7 +60,7 @@ export function DashboardScreen() {
         </Pressable>
       </View>
       {showAlerts
-        ? activeAlerts.map((alert) => <AlertCard key={alert.id} {...alert} />)
+        ? alerts.map((alert) => <AlertCard key={alert.id} {...alert} />)
         : <Text style={styles.helpText}>Alerts are hidden.</Text>}
 
       <Text style={styles.sectionTitle}>How to Use</Text>

@@ -5,12 +5,13 @@ import { AlertCard } from "../components/AlertCard";
 import { StatsCard } from "../components/StatsCard";
 import { WeatherPanel } from "../components/WeatherPanel";
 import { Button } from "../components/ui/button";
-import { activeAlerts } from "../data/activeAlerts";
+import { ActiveAlert, activeAlerts as seedAlerts } from "../data/activeAlerts";
 import { monitoredWaters } from "../data/monitoredWaters";
 import "../styles/pages/Dashboard.css";
 
 export function Dashboard() {
   const [showAlerts, setShowAlerts] = useState(true);
+  const [weatherAlerts, setWeatherAlerts] = useState<ActiveAlert[]>([]);
   const alertsSectionRef = useRef<HTMLElement | null>(null);
   const featuredWaters = monitoredWaters.slice(0, 3);
   const safeCount = monitoredWaters.filter((item) => item.status === "Safe").length;
@@ -26,6 +27,9 @@ export function Dashboard() {
     { id: "active-alerts", label: "Active Alerts", value: String(alertCount), icon: "\u26A0\uFE0F" },
     { id: "safe-areas", label: "Safe Areas", value: String(safeCount), icon: "\u2705" },
   ];
+
+  const nonWeatherAlerts = seedAlerts.filter((alert) => alert.id !== "a2");
+  const alerts = [...nonWeatherAlerts, ...weatherAlerts];
 
   return (
     <>
@@ -58,7 +62,7 @@ export function Dashboard() {
 
       <section className="app__section">
         <WeatherPanel
-          activeAlerts={activeAlerts}
+          onWeatherAlertsChange={setWeatherAlerts}
           onOpenAlerts={() => {
             setShowAlerts(true);
             requestAnimationFrame(() => {
@@ -77,7 +81,7 @@ export function Dashboard() {
         </div>
         {showAlerts && (
           <ul className="app__alerts-grid">
-            {activeAlerts.map((alert) => (
+            {alerts.map((alert) => (
               <li key={alert.id}>
                 <AlertCard {...alert} />
               </li>
