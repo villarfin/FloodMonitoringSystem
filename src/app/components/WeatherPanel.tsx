@@ -1,5 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useWeather } from "../hooks/useWeather";
+import { ActiveAlert } from "../data/activeAlerts";
+import { deriveWeatherAlerts } from "../utils/weatherAlerts";
 import "../styles/components/WeatherPanel.css";
 
 type MetricType = "temperature" | "precipitation" | "wind";
@@ -37,9 +39,19 @@ function formatDay(value: string): string {
   return date.toLocaleDateString([], { weekday: "short" });
 }
 
-export function WeatherPanel() {
+interface WeatherPanelProps {
+  onOpenAlerts: () => void;
+  onWeatherAlertsChange: (alerts: ActiveAlert[]) => void;
+}
+
+export function WeatherPanel({ onOpenAlerts, onWeatherAlertsChange }: WeatherPanelProps) {
   const { status, errorMessage, locationName, payload, loadWeather, usePreciseLocation } = useWeather();
   const [metric, setMetric] = useState<MetricType>("temperature");
+  const weatherLinkedAlerts = useMemo(() => (payload ? deriveWeatherAlerts(payload) : []), [payload]);
+
+  useEffect(() => {
+    onWeatherAlertsChange(weatherLinkedAlerts);
+  }, [onWeatherAlertsChange, weatherLinkedAlerts]);
 
   const chartSeries = useMemo(() => {
     if (!payload) return [];
@@ -98,7 +110,7 @@ export function WeatherPanel() {
               <p className="weather-panel__current-icon">{getWeatherIcon(payload.current.weatherCode)}</p>
               <p className="weather-panel__temperature">{Math.round(payload.current.temperature)}C</p>
               <ul className="weather-panel__quick-stats">
-                <li>Precipitation: {Math.round(payload.current.precipitation)}%</li>
+                <li>Precipitation: {Math.round(payload.current.precipitationProbability)}%</li>
                 <li>Humidity: {Math.round(payload.current.humidity)}%</li>
                 <li>Wind: {Math.round(payload.current.windSpeed)} km/h</li>
               </ul>
@@ -172,6 +184,18 @@ export function WeatherPanel() {
               </li>
             ))}
           </ul>
+
+          <section className="weather-panel__linked-alerts" aria-label="Weather linked alerts">
+            <div>
+              <p className="weather-panel__linked-title">Weather-linked Active Alerts</p>
+              <p className="weather-panel__linked-count">
+                {weatherLinkedAlerts.length} alert(s) connected to current weather conditions
+              </p>
+            </div>
+            <button type="button" className="weather-panel__action weather-panel__action--linked" onClick={onOpenAlerts}>
+              Show Alerts
+            </button>
+          </section>
         </>
       )}
     </section>

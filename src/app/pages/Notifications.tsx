@@ -1,4 +1,6 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useWeather } from "../hooks/useWeather";
+import { deriveWeatherAlerts } from "../utils/weatherAlerts";
 import "../styles/pages/Notifications.css";
 
 type NotificationType = "Tsunami" | "Flood" | "Rainfall";
@@ -29,41 +31,57 @@ const initialNotifications: NotificationItem[] = [
     time: "08:12",
     isRead: false,
   },
-  {
-    id: "n3",
-    title: "Heavy Rainfall Forecast",
-    message: "Weather system predicts intense rain in 2 hours.",
-    type: "Rainfall",
-    time: "07:55",
-    isRead: true,
-  },
 ];
 
 export function Notifications() {
+  const { status, payload } = useWeather();
   const [items, setItems] = useState<NotificationItem[]>(initialNotifications);
+  const [readOverrides, setReadOverrides] = useState<Record<string, boolean>>({});
   const [filterType, setFilterType] = useState<"All" | NotificationType>("All");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
 
+  const liveWeatherItems = useMemo<NotificationItem[]>(() => {
+    if (!payload) return [];
+    return deriveWeatherAlerts(payload).map((alert) => ({
+      id: `live-${alert.id}`,
+      title: `[Live Weather] ${alert.title}`,
+      message: alert.message,
+      type: alert.type === "danger" ? "Flood" : "Rainfall",
+      time: new Date(payload.current.observedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      isRead: false,
+    }));
+  }, [payload]);
+
+  const mergedItems = useMemo(() => {
+    return [...liveWeatherItems, ...items].map((item) => ({
+      ...item,
+      isRead: readOverrides[item.id] ?? item.isRead,
+    }));
+  }, [items, liveWeatherItems, readOverrides]);
+
   const filteredItems = useMemo(() => {
-    return items.filter((item) => {
+    return mergedItems.filter((item) => {
       const typeOk = filterType === "All" || item.type === filterType;
       const unreadOk = !showUnreadOnly || !item.isRead;
       return typeOk && unreadOk;
     });
-  }, [items, filterType, showUnreadOnly]);
+  }, [mergedItems, filterType, showUnreadOnly]);
 
-  const unreadCount = items.filter((item) => !item.isRead).length;
+  const unreadCount = mergedItems.filter((item) => !item.isRead).length;
 
   const toggleRead = (id: string) => {
-    setItems((previous) =>
-      previous.map((item) =>
-        item.id === id ? { ...item, isRead: !item.isRead } : item,
-      ),
-    );
+    setReadOverrides((previous) => ({
+      ...previous,
+      [id]: !(previous[id] ?? mergedItems.find((item) => item.id === id)?.isRead ?? false),
+    }));
   };
 
   const markAllAsRead = () => {
-    setItems((previous) => previous.map((item) => ({ ...item, isRead: true })));
+    const updates: Record<string, boolean> = {};
+    mergedItems.forEach((item) => {
+      updates[item.id] = true;
+    });
+    setReadOverrides((previous) => ({ ...previous, ...updates }));
   };
 
   const clearAll = () => {
@@ -75,6 +93,9 @@ export function Notifications() {
       <h2 className="app__section-title">Notifications Center</h2>
       <p className="app__page-text">
         Manage tsunami/flood alerts and mark updates as read/unread.
+      </p>
+      <p className="app__page-text">
+        Live weather feed: <strong>{status === "loading" ? "Updating..." : "Synced"}</strong>
       </p>
 
       <div className="app__notif-toolbar">
@@ -146,5 +167,3 @@ export function Notifications() {
     </section>
   );
 }
-
-

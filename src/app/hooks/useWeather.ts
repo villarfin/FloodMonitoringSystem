@@ -6,6 +6,7 @@ export type CurrentWeather = {
   temperature: number;
   humidity: number;
   precipitation: number;
+  precipitationProbability: number;
   windSpeed: number;
   weatherCode: number;
   observedAt: string;
@@ -100,6 +101,7 @@ async function fetchWeather(latitude: number, longitude: number): Promise<Weathe
       temperature: Number(json.current.temperature_2m ?? 0),
       humidity: Number(json.current.relative_humidity_2m ?? 0),
       precipitation: Number(json.current.precipitation ?? 0),
+      precipitationProbability: Number(json.hourly.precipitation_probability?.[startIndex] ?? 0),
       windSpeed: Number(json.current.wind_speed_10m ?? 0),
       weatherCode: Number(json.current.weather_code ?? 0),
       observedAt: currentTime,
@@ -124,7 +126,7 @@ export function useWeather() {
         fetchLocationName(latitude, longitude),
       ]);
       setPayload(weather);
-      setLocationName(place || fallbackLabel || `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`);
+      setLocationName(place || fallbackLabel || FALLBACK_COORDS.name);
       setStatus("success");
     } catch (error) {
       setStatus("error");
@@ -140,7 +142,7 @@ export function useWeather() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        await loadByCoords(position.coords.latitude, position.coords.longitude, "Current Location");
+        await loadByCoords(position.coords.latitude, position.coords.longitude);
       },
       async () => {
         await loadByCoords(FALLBACK_COORDS.latitude, FALLBACK_COORDS.longitude, FALLBACK_COORDS.name);
@@ -153,7 +155,7 @@ export function useWeather() {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        await loadByCoords(position.coords.latitude, position.coords.longitude, "Current Location");
+        await loadByCoords(position.coords.latitude, position.coords.longitude);
       },
       async () => {
         setErrorMessage("Precise location denied. Keeping current weather data.");
@@ -166,6 +168,14 @@ export function useWeather() {
     loadWeather();
   }, [loadWeather]);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      loadWeather();
+    }, 300000);
+
+    return () => window.clearInterval(intervalId);
+  }, [loadWeather]);
+
   return {
     status,
     errorMessage,
@@ -175,4 +185,3 @@ export function useWeather() {
     usePreciseLocation,
   };
 }
-
