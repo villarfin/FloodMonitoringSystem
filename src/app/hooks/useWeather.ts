@@ -126,7 +126,7 @@ export function useWeather() {
         fetchLocationName(latitude, longitude),
       ]);
       setPayload(weather);
-      setLocationName(place || fallbackLabel || `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`);
+      setLocationName(place || fallbackLabel || FALLBACK_COORDS.name);
       setStatus("success");
     } catch (error) {
       setStatus("error");
