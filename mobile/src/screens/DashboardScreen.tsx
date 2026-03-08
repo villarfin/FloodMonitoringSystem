@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AlertCard } from "../components/AlertCard";
@@ -10,7 +10,7 @@ import { WeatherPanel } from "../components/WeatherPanel";
 import { ActiveAlert, activeAlerts as seedAlerts } from "../data/activeAlerts";
 import { monitoredWaters } from "../data/monitoredWaters";
 import { RootStackParamList } from "../types";
-import { colors } from "../styles/theme";
+import { styles } from "../styles/pages/DashboardScreen.styles";
 
 export function DashboardScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -73,36 +73,3 @@ export function DashboardScreen() {
     </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionTitle: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: "800",
-    marginBottom: 10,
-    marginTop: 4,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  link: {
-    color: colors.brand,
-    fontWeight: "700",
-    fontSize: 12,
-  },
-  helpWrap: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
-    padding: 12,
-  },
-  helpText: {
-    color: colors.textMuted,
-    lineHeight: 20,
-    marginBottom: 4,
-  },
-});

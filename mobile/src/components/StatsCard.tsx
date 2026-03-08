@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { MobileCard } from "./MobileCard";
-import { colors } from "../styles/theme";
+import { styles } from "../styles/components/StatsCard.styles";
 
 interface StatsCardProps {
   label: string;
@@ -21,25 +21,3 @@ export function StatsCard({ label, value, icon }: StatsCardProps) {
     </MobileCard>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  label: {
-    color: colors.textMuted,
-    fontSize: 12,
-  },
-  value: {
-    color: colors.text,
-    fontSize: 26,
-    fontWeight: "800",
-    marginTop: 2,
-  },
-  icon: {
-    fontSize: 26,
-  },
-});
-

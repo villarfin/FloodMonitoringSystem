@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { ScreenLayout } from "../components/ScreenLayout";
-import { colors } from "../styles/theme";
+import { styles } from "../styles/pages/SummaryScreen.styles";
 
 export function SummaryScreen() {
   return (
@@ -13,26 +13,3 @@ export function SummaryScreen() {
     </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 12,
-    backgroundColor: colors.surface,
-  },
-  label: {
-    color: colors.textMuted,
-    fontSize: 12,
-  },
-  value: {
-    color: colors.text,
-    fontWeight: "700",
-    marginTop: 3,
-  },
-  note: {
-    color: colors.textMuted,
-    marginTop: 8,
-  },
-});

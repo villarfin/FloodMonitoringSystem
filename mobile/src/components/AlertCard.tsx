@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { MobileCard } from "./MobileCard";
 import { colors } from "../styles/theme";
+import { styles } from "../styles/components/AlertCard.styles";
 
 interface AlertCardProps {
   title: string;
@@ -21,22 +22,3 @@ export function AlertCard({ title, message, type }: AlertCardProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    borderLeftWidth: 4,
-    borderRadius: 14,
-    marginBottom: 10,
-  },
-  title: {
-    color: colors.text,
-    fontSize: 15,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-  message: {
-    color: colors.textMuted,
-    fontSize: 13,
-    lineHeight: 19,
-  },
-});
