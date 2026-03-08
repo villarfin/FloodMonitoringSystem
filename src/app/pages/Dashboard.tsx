@@ -3,9 +3,10 @@ import { Link } from "react-router";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { AlertCard } from "../components/AlertCard";
 import { StatsCard } from "../components/StatsCard";
+import { WaterLevelList } from "../components/WaterLevelList";
+import { TrendChart } from "../components/TrendChart";
 import { Button } from "../components/ui/button";
 import { monitoredWaters } from "../data/monitoredWaters";
-import "./Dashboard.css";
 
 export function Dashboard() {
   const [showAlerts, setShowAlerts] = useState(true);
@@ -18,10 +19,10 @@ export function Dashboard() {
       id: "total-locations",
       label: "Total Locations",
       value: String(monitoredWaters.length),
-      icon: <img src="/location.png" alt="Location" className="app__location-icon" />,
+      icon: <img src="/location.png" alt="Location" className="w-10 h-10 object-contain" />,
     },
-    { id: "active-alerts", label: "Active Alerts", value: String(alertCount), icon: "\u26A0\uFE0F" },
-    { id: "safe-areas", label: "Safe Areas", value: String(safeCount), icon: "\u2705" },
+    { id: "active-alerts", label: "Active Alerts", value: String(alertCount), icon: <span className="text-2xl">⚠️</span> },
+    { id: "safe-areas", label: "Safe Areas", value: String(safeCount), icon: <span className="text-2xl">✅</span> },
   ];
 
   const alerts = [
@@ -34,18 +35,23 @@ export function Dashboard() {
     <>
       <section className="app__section">
         <h2 className="app__section-title">Overview Statistics</h2>
-        <div className="app__stats-grid">
+        <div className="flex flex-col lg:flex-row gap-4">
           {stats.map((stat) => (
-            <StatsCard key={stat.id} label={stat.label} value={stat.value} icon={stat.icon} />
+            <div key={stat.id} className="flex-1">
+              <StatsCard key={stat.id} label={stat.label} value={stat.value} icon={stat.icon} />
+            </div>
           ))}
         </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Water Level List takes up 1 column */}
         <div className="lg:col-span-1 h-[400px]">
           <WaterLevelList />
         </div>
-      </div>
+      </section>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <TrendChart />
         </div>
