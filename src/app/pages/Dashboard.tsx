@@ -1,15 +1,17 @@
-﻿import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { AlertCard } from "../components/AlertCard";
 import { StatsCard } from "../components/StatsCard";
 import { WeatherPanel } from "../components/WeatherPanel";
 import { Button } from "../components/ui/button";
+import { activeAlerts } from "../data/activeAlerts";
 import { monitoredWaters } from "../data/monitoredWaters";
 import "../styles/pages/Dashboard.css";
 
 export function Dashboard() {
   const [showAlerts, setShowAlerts] = useState(true);
+  const alertsSectionRef = useRef<HTMLElement | null>(null);
   const featuredWaters = monitoredWaters.slice(0, 3);
   const safeCount = monitoredWaters.filter((item) => item.status === "Safe").length;
   const alertCount = monitoredWaters.filter((item) => item.status !== "Safe").length;
@@ -23,12 +25,6 @@ export function Dashboard() {
     },
     { id: "active-alerts", label: "Active Alerts", value: String(alertCount), icon: "\u26A0\uFE0F" },
     { id: "safe-areas", label: "Safe Areas", value: String(safeCount), icon: "\u2705" },
-  ];
-
-  const alerts = [
-    { id: "a1", title: "High Water Level", message: "Central Dam water level is approaching maximum capacity.", type: "danger" },
-    { id: "a2", title: "Heavy Rainfall Expected", message: "Weather forecast shows heavy rain in the next 6 hours.", type: "warning" },
-    { id: "a3", title: "Tsunami Alert", message: "Tsunami warning issued for coastal areas.", type: "danger" },
   ];
 
   return (
@@ -61,10 +57,18 @@ export function Dashboard() {
       </section>
 
       <section className="app__section">
-        <WeatherPanel />
+        <WeatherPanel
+          activeAlerts={activeAlerts}
+          onOpenAlerts={() => {
+            setShowAlerts(true);
+            requestAnimationFrame(() => {
+              alertsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+          }}
+        />
       </section>
 
-      <section className="app__section">
+      <section className="app__section" ref={alertsSectionRef}>
         <div className="app__alerts-header">
           <h2 className="app__section-title app__section-title--no-margin">Active Alerts</h2>
           <Button type="button" onClick={() => setShowAlerts((v) => !v)} variant="outline">
@@ -73,7 +77,7 @@ export function Dashboard() {
         </div>
         {showAlerts && (
           <ul className="app__alerts-grid">
-            {alerts.map((alert) => (
+            {activeAlerts.map((alert) => (
               <li key={alert.id}>
                 <AlertCard {...alert} />
               </li>
@@ -94,5 +98,3 @@ export function Dashboard() {
     </>
   );
 }
-
-

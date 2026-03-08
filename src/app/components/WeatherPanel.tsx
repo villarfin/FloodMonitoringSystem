@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useWeather } from "../hooks/useWeather";
+import { ActiveAlert } from "../data/activeAlerts";
 import "../styles/components/WeatherPanel.css";
 
 type MetricType = "temperature" | "precipitation" | "wind";
@@ -37,9 +38,15 @@ function formatDay(value: string): string {
   return date.toLocaleDateString([], { weekday: "short" });
 }
 
-export function WeatherPanel() {
+interface WeatherPanelProps {
+  activeAlerts: ActiveAlert[];
+  onOpenAlerts: () => void;
+}
+
+export function WeatherPanel({ activeAlerts, onOpenAlerts }: WeatherPanelProps) {
   const { status, errorMessage, locationName, payload, loadWeather, usePreciseLocation } = useWeather();
   const [metric, setMetric] = useState<MetricType>("temperature");
+  const weatherLinkedAlerts = activeAlerts.filter((alert) => alert.type !== "info");
 
   const chartSeries = useMemo(() => {
     if (!payload) return [];
@@ -172,6 +179,18 @@ export function WeatherPanel() {
               </li>
             ))}
           </ul>
+
+          <section className="weather-panel__linked-alerts" aria-label="Weather linked alerts">
+            <div>
+              <p className="weather-panel__linked-title">Weather-linked Active Alerts</p>
+              <p className="weather-panel__linked-count">
+                {weatherLinkedAlerts.length} alert(s) connected to current weather conditions
+              </p>
+            </div>
+            <button type="button" className="weather-panel__action weather-panel__action--linked" onClick={onOpenAlerts}>
+              Show Alerts
+            </button>
+          </section>
         </>
       )}
     </section>

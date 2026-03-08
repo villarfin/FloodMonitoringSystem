@@ -7,6 +7,7 @@ import { ScreenLayout } from "../components/ScreenLayout";
 import { StatsCard } from "../components/StatsCard";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { WeatherPanel } from "../components/WeatherPanel";
+import { activeAlerts } from "../data/activeAlerts";
 import { monitoredWaters } from "../data/monitoredWaters";
 import { RootStackParamList } from "../types";
 import { colors } from "../styles/theme";
@@ -28,12 +29,6 @@ export function DashboardScreen() {
     [alertCount, safeCount],
   );
 
-  const alerts = [
-    { id: "a1", title: "High Water Level", message: "Central Dam water level is approaching maximum capacity.", type: "danger" as const },
-    { id: "a2", title: "Heavy Rainfall Expected", message: "Weather forecast shows heavy rain in the next 6 hours.", type: "warning" as const },
-    { id: "a3", title: "Tsunami Alert", message: "Tsunami warning issued for coastal areas.", type: "danger" as const },
-  ];
-
   return (
     <ScreenLayout title="Dashboard" subtitle="Real-time water level monitoring and alerts">
       <Text style={styles.sectionTitle}>Overview Statistics</Text>
@@ -52,7 +47,7 @@ export function DashboardScreen() {
       ))}
 
       <Text style={styles.sectionTitle}>Weather</Text>
-      <WeatherPanel alerts={alerts} onOpenAlerts={() => setShowAlerts(true)} />
+      <WeatherPanel alerts={activeAlerts} onOpenAlerts={() => setShowAlerts(true)} />
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Active Alerts</Text>
@@ -61,7 +56,7 @@ export function DashboardScreen() {
         </Pressable>
       </View>
       {showAlerts
-        ? alerts.map((alert) => <AlertCard key={alert.id} {...alert} />)
+        ? activeAlerts.map((alert) => <AlertCard key={alert.id} {...alert} />)
         : <Text style={styles.helpText}>Alerts are hidden.</Text>}
 
       <Text style={styles.sectionTitle}>How to Use</Text>
