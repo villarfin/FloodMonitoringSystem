@@ -1,5 +1,5 @@
-import { Link } from "react-router";
-import "./Admin.css";
+﻿import { Link } from "react-router";
+import "../styles/pages/Admin.css";
 
 export function Admin() {
   return (
@@ -9,17 +9,19 @@ export function Admin() {
         Administrative actions such as configuration or user management are
         accessible here.
       </p>
-      <div className="app__graph-placeholder">
+      <section className="app__graph-placeholder">
         <h3>IoT Alert History Graph (Prototype)</h3>
         <p className="app__page-text">
           This section is reserved for past tsunami/flood alert records from the IoT device.
         </p>
-      </div>
-      <div className="app__page-actions">
+      </section>
+      <nav className="app__page-actions" aria-label="Admin actions">
         <Link to="/admin/users" className="app__page-link">
           User Management
         </Link>
-      </div>
+      </nav>
     </section>
   );
 }
+
+

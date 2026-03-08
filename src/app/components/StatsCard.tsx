@@ -1,9 +1,9 @@
-// Simple Statistics Card Component
+﻿// Simple Statistics Card Component
 // Shows one piece of statistical information
 
 import { Card, CardContent } from "./ui/card";
 import { ReactNode } from "react";
-import "./StatsCard.css";
+import "../styles/components/StatsCard.css";
 
 // Props that this component receives
 interface StatsCardProps {
@@ -30,3 +30,5 @@ export function StatsCard({ label, value, icon }: StatsCardProps) {
     </Card>
   );
 }
+
+

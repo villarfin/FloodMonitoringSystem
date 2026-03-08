@@ -1,0 +1,118 @@
+.app__nav-board {
+  position: sticky;
+  top: 1rem;
+}
+
+.app__nav-board-toggle {
+  display: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.app__nav-board-panel {
+  padding: 0.95rem;
+  border: 1px solid #d7e2f4;
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.app__nav-board-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.app__nav-board-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.app__nav-board-links li {
+  display: grid;
+}
+
+.app__nav-board-links a {
+  padding: 0.56rem 0.68rem;
+  border-radius: 0.55rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: #0f172a;
+  border: 1px solid transparent;
+}
+
+.app__nav-board-links a:hover {
+  color: #1d4ed8;
+  border-color: #cddcf6;
+  background-color: #edf4ff;
+}
+
+.app__nav-board-links a.active {
+  color: #1d4ed8;
+  border-color: #bfd4f7;
+  background-color: #e5efff;
+  box-shadow: inset 3px 0 0 #2563eb;
+}
+
+.app__nav-board-logout {
+  width: 100%;
+  padding: 0.56rem 0.68rem;
+  border: 1px solid transparent;
+  border-radius: 0.55rem;
+  text-align: left;
+  font: inherit;
+  font-weight: 500;
+  color: #c2410c;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.app__nav-board-logout:hover {
+  border-color: #f9d4c0;
+  background-color: #fff7ed;
+}
+
+.app__hamburger {
+  display: grid;
+  gap: 0.22rem;
+}
+
+.app__hamburger span {
+  width: 1rem;
+  height: 2px;
+  display: block;
+  background-color: currentColor;
+  border-radius: 2px;
+}
+
+@media (max-width: 640px) {
+  .app__nav-board {
+    position: static;
+  }
+
+  .app__nav-board-toggle {
+    display: inline-grid;
+  }
+
+  .app__nav-board-panel {
+    display: none;
+    margin-top: 0.55rem;
+  }
+
+  .app__nav-board-panel.is-open {
+    display: block;
+  }
+}

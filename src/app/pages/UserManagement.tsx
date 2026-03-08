@@ -1,5 +1,5 @@
-import { Link } from "react-router";
-import "./UserManagement.css";
+﻿import { Link } from "react-router";
+import "../styles/pages/UserManagement.css";
 
 export function UserManagement() {
   return (
@@ -8,11 +8,13 @@ export function UserManagement() {
       <p className="app__page-text">
         Here an admin can add, remove, or modify users in the system.
       </p>
-      <div className="app__page-actions">
+      <nav className="app__page-actions" aria-label="User management navigation">
         <Link to="/admin" className="app__page-link">
           Back to Admin
         </Link>
-      </div>
+      </nav>
     </section>
   );
 }
+
+

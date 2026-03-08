@@ -1,6 +1,6 @@
-import { FormEvent, useState } from "react";
+﻿import { FormEvent, useState } from "react";
 import { monitoredWaters } from "../data/monitoredWaters";
-import "./IncidentReport.css";
+import "../styles/pages/IncidentReport.css";
 
 type Urgency = "Low" | "Medium" | "High";
 
@@ -205,7 +205,7 @@ export function IncidentReport() {
       </form>
 
       {submitted && (
-        <div className="app__form-preview">
+        <section className="app__form-preview" aria-live="polite">
           <h3>Submitted Report Preview</h3>
           <p><strong>Reporter:</strong> {reporterName}</p>
           <p><strong>Email:</strong> {email}</p>
@@ -219,8 +219,10 @@ export function IncidentReport() {
           <p><strong>Notify Email:</strong> {notifyEmail ? "Yes" : "No"}</p>
           <p><strong>Date/Time:</strong> {reportDate} {reportTime}</p>
           <p><strong>Notes:</strong> {notes}</p>
-        </div>
+        </section>
       )}
     </section>
   );
 }
+
+

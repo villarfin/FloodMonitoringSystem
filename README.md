@@ -1,29 +1,63 @@
 # Flood Monitoring System
 
-A React + Vite prototype web app for flood and tsunami monitoring.
+A beginner-friendly React web app for monitoring water levels and flood alerts.
 
-## Overview
+This project was built for IT students to practice:
+- frontend UI development
+- routing and navigation
+- form handling
+- basic accessibility
+- production build and deployment
 
-This project simulates a flood monitoring dashboard with:
+## What This App Does
 
-- monitored water locations and alert status
-- interactive monitoring cards with inline details
-- protected admin route with login and logout flow
-- incident reporting form using controlled inputs
-- multi-page navigation using client-side routing
+After login, users can open pages for:
+- Dashboard overview
+- Monitoring water locations
+- Incident report submission
+- Notifications center
+- Summary and configuration
+- Admin and user management
+
+## Main Features
+
+1. Protected app access
+- The whole app is protected.
+- If not logged in, user is redirected to `/admin/login`.
+- Logout is in the navbar menu.
+
+2. Monitoring cards
+- Click a card to expand details.
+- Shows image, trend, location, and sensor details.
+
+3. Incident Report form
+- Uses controlled inputs with React state.
+- Includes text, email, phone, select, radio, checkbox, date, time, textarea.
+
+4. Notifications management
+- Filter notifications by type.
+- Show unread only.
+- Mark as read/unread and clear all.
+
+5. Deployment-ready routing
+- `vercel.json` includes SPA rewrite so deep routes work on refresh.
 
 ## Tech Stack
 
 - React 18
-- Vite 6
-- React Router 7 (`react-router`)
 - TypeScript
+- Vite 6
+- React Router 7
+- CSS
 
-## Project Structure
+## Project Structure (Simplified)
 
 ```text
 src/
   app/
+    auth/
+      AdminLogin.tsx
+      AdminLogin.css
     components/
     data/
     pages/
@@ -31,120 +65,80 @@ src/
       Configuration.tsx
       Dashboard.tsx
       IncidentReport.tsx
-      Login.tsx
       Monitoring.tsx
       Notifications.tsx
       Summary.tsx
       UserManagement.tsx
     App.tsx
-    App.css
   main.tsx
 public/
   waters/
+  location.png
+vercel.json
 ```
 
-## Features
+## How To Run This Project (Step by Step)
 
-### 1. State Management
+### 1. Install prerequisites
+- Node.js (recommended: version 18 or higher)
+- npm (comes with Node.js)
 
-- local component state via `useState`
-- auth state (`isSignedIn`) in `src/app/App.tsx`
-- monitoring selection state in `src/app/pages/Monitoring.tsx`
-- full form state in `src/app/pages/IncidentReport.tsx`
-
-### 2. Controlled Form Inputs
-
-The Incident Report page (`/incident-report`) includes controlled:
-
-- text
-- email
-- tel
-- number
-- select
-- radio
-- checkbox
-- date
-- time
-- textarea
-
-Submitted values are displayed in a live preview section.
-
-### 3. Routing and Navigation
-
-Routes configured in `src/app/App.tsx`:
-
-- `/` Dashboard
-- `/login` Login
-- `/admin` Admin (protected)
-- `/admin/users` User Management (protected)
-- `/monitoring` Monitoring
-- `/incident-report` Incident Report
-- `/notifications` Notifications
-- `/summary` Summary
-- `/configuration` Configuration
-
-Navigation is available through the hamburger menu in the top blue header.
-
-### 4. Protected Admin Access
-
-- unauthenticated users are redirected from `/admin` and `/admin/users` to `/login`
-- successful login redirects users back to the requested page
-- admin page provides a logout action
-
-### 5. Monitoring Cards
-
-- water level cards are shown on the Monitoring page
-- clicking a card expands inline details in the same page
-- each card includes image, trend, location details, and sensor metadata
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ recommended
-- npm
-
-### Install dependencies
-
+### 2. Install dependencies
 ```bash
 npm install
 ```
 
-### Run in development
-
+### 3. Start development server
 ```bash
 npm run dev
 ```
 
-### Build for production
+### 4. Open in browser
+Use the local URL shown in terminal (usually `http://localhost:5173`).
+
+## Available Scripts
 
 ```bash
-npm run build
+npm run dev      # run local development server
+npm run build    # create production build in dist/
+npm run preview  # preview the production build locally
+npm run start    # alias for vite dev in this project
 ```
 
-### Preview production build locally
+## Routes
 
-```bash
-npm run start
-```
+- `/admin/login` -> login page (public)
+- `/` -> dashboard (protected)
+- `/monitoring` -> monitoring page (protected)
+- `/incident-report` -> form page (protected)
+- `/notifications` -> notifications page (protected)
+- `/summary` -> summary page (protected)
+- `/configuration` -> configuration page (protected)
+- `/admin` -> admin page (protected)
+- `/admin/users` -> user management (protected)
 
-## Quick Demo Flow
+## Deployment (Vercel)
 
-1. Open Dashboard (`/`)
-2. Open Monitoring and click different cards
-3. Open Incident Report and submit the controlled form
-4. Open Admin (you will be redirected to Login)
-5. Login, open Admin, then click Logout
+This repo is configured for Vercel:
+- Build command: `npm run build`
+- Output directory: `dist`
+- SPA rewrite is configured in `vercel.json`
 
-## Notes
+If Vercel is connected to this GitHub repository, every push to `main` will auto-deploy.
 
-- Static water images are stored in `public/waters`.
-- If an image fails, the app falls back to `/location.png`.
+## Quick Manual Test Checklist
 
-## Submission Commit Message
+Before submission, verify:
+1. `npm run build` succeeds
+2. App opens and login works
+3. Logout redirects to login page
+4. Protected routes require login
+5. Deployed app refresh on deep routes (example: `/monitoring`) does not 404
+6. Browser console has no errors
 
-Required lab commit message:
+## Notes for New IT Students
 
-```text
-AppDev-L4: State, interaction, and navigation implemented
-```
+- Start reading `src/app/App.tsx` first. It controls routes and login protection.
+- Use small commits while editing (one feature per commit).
+- Test every feature after changes, not only at the end.
+- If deployed app breaks on refresh, check `vercel.json` rewrite config first.

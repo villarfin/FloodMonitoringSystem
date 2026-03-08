@@ -1,9 +1,9 @@
-// Simple Alert Card Component
+﻿// Simple Alert Card Component
 // Shows one alert message
 
 import { Card, CardContent } from "./ui/card";
 import { AlertCircle } from "lucide-react";
-import "./AlertCard.css";
+import "../styles/components/AlertCard.css";
 
 // Props that this component receives
 interface AlertCardProps {
@@ -33,3 +33,5 @@ export function AlertCard({ title, message, type }: AlertCardProps) {
     </Card>
   );
 }
+
+

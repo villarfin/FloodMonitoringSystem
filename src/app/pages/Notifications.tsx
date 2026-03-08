@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import "./Notifications.css";
+﻿import { useMemo, useState } from "react";
+import "../styles/pages/Notifications.css";
 
 type NotificationType = "Tsunami" | "Flood" | "Rainfall";
 
@@ -116,32 +116,35 @@ export function Notifications() {
         Unread notifications: <strong>{unreadCount}</strong>
       </p>
 
-      <div className="app__notif-list">
-        {filteredItems.length === 0 ? (
-          <div className="app__notif-empty">No notifications to show.</div>
-        ) : (
-          filteredItems.map((item) => (
-            <article
-              key={item.id}
-              className={`app__notif-card ${item.isRead ? "app__notif-card--read" : ""}`}
-            >
-              <div className="app__notif-header">
-                <h3>{item.title}</h3>
-                <span className="app__notif-time">{item.time}</span>
-              </div>
-              <p className="app__page-text">{item.message}</p>
-              <p className="app__notif-type">{item.type}</p>
-              <button
-                type="button"
-                className="app__page-link app__page-link--button"
-                onClick={() => toggleRead(item.id)}
+      {filteredItems.length === 0 ? (
+        <p className="app__notif-empty">No notifications to show.</p>
+      ) : (
+        <ul className="app__notif-list">
+          {filteredItems.map((item) => (
+            <li key={item.id}>
+              <article
+                className={`app__notif-card ${item.isRead ? "app__notif-card--read" : ""}`}
               >
-                {item.isRead ? "Mark as unread" : "Mark as read"}
-              </button>
-            </article>
-          ))
-        )}
-      </div>
+                <header className="app__notif-header">
+                  <h3>{item.title}</h3>
+                  <span className="app__notif-time">{item.time}</span>
+                </header>
+                <p className="app__page-text">{item.message}</p>
+                <p className="app__notif-type">{item.type}</p>
+                <button
+                  type="button"
+                  className="app__page-link app__page-link--button"
+                  onClick={() => toggleRead(item.id)}
+                >
+                  {item.isRead ? "Mark as unread" : "Mark as read"}
+                </button>
+              </article>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
+
+

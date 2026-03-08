@@ -1,5 +1,5 @@
-import { Link } from "react-router";
-import "./Summary.css";
+﻿import { Link } from "react-router";
+import "../styles/pages/Summary.css";
 
 export function Summary() {
   return (
@@ -8,11 +8,13 @@ export function Summary() {
       <p className="app__page-text">
         A high-level summary of system state can be shown here.
       </p>
-      <div className="app__page-actions">
+      <nav className="app__page-actions" aria-label="Summary navigation">
         <Link to="/configuration" className="app__page-link">
           Go to Configuration
         </Link>
-      </div>
+      </nav>
     </section>
   );
 }
+
+

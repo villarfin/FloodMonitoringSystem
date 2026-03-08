@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "react-router";
 import { NavBar } from "./components/NavBar";
 import { Dashboard } from "./pages/Dashboard";
@@ -10,26 +10,37 @@ import { Configuration } from "./pages/Configuration";
 import { Notifications } from "./pages/Notifications";
 import { AdminLogin } from "./auth/AdminLogin";
 import { IncidentReport } from "./pages/IncidentReport";
-import "./App.css";
+import "./styles/app/App.css";
 
 interface AppLayoutProps {
   onLogout: () => void;
 }
 
 function AppLayout({ onLogout }: AppLayoutProps) {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="app">
       <header className="app__header">
-        <div>
+        <section>
           <h1 className="app__title">Flood Monitoring System</h1>
           <p className="app__subtitle">Real-time water level monitoring and alerts</p>
-        </div>
-        <NavBar onLogout={onLogout} />
+        </section>
       </header>
 
-      <main className="app__main">
-        <Outlet />
-      </main>
+      <div className="app__workspace">
+        <aside className="app__sidebar" aria-label="Primary navigation">
+          <NavBar onLogout={onLogout} />
+        </aside>
+
+        <main className="app__main">
+          <Outlet />
+        </main>
+      </div>
+
+      <footer className="app__footer">
+        <p>Flood Monitoring System {currentYear}</p>
+      </footer>
     </div>
   );
 }
@@ -74,3 +85,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+

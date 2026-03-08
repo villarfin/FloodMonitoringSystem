@@ -1,11 +1,12 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link } from "react-router";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { AlertCard } from "../components/AlertCard";
 import { StatsCard } from "../components/StatsCard";
+import { WeatherPanel } from "../components/WeatherPanel";
 import { Button } from "../components/ui/button";
 import { monitoredWaters } from "../data/monitoredWaters";
-import "./Dashboard.css";
+import "../styles/pages/Dashboard.css";
 
 export function Dashboard() {
   const [showAlerts, setShowAlerts] = useState(true);
@@ -34,11 +35,13 @@ export function Dashboard() {
     <>
       <section className="app__section">
         <h2 className="app__section-title">Overview Statistics</h2>
-        <div className="app__stats-grid">
+        <ul className="app__stats-grid">
           {stats.map((stat) => (
-            <StatsCard key={stat.id} label={stat.label} value={stat.value} icon={stat.icon} />
+            <li key={stat.id}>
+              <StatsCard label={stat.label} value={stat.value} icon={stat.icon} />
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="app__section">
@@ -48,11 +51,17 @@ export function Dashboard() {
             View All Monitored Waters
           </Link>
         </div>
-        <div className="app__water-grid">
+        <ul className="app__water-grid">
           {featuredWaters.map((loc) => (
-            <WaterLevelCard key={loc.id} {...loc} />
+            <li key={loc.id}>
+              <WaterLevelCard {...loc} />
+            </li>
           ))}
-        </div>
+        </ul>
+      </section>
+
+      <section className="app__section">
+        <WeatherPanel />
       </section>
 
       <section className="app__section">
@@ -63,11 +72,13 @@ export function Dashboard() {
           </Button>
         </div>
         {showAlerts && (
-          <div className="app__alerts-grid">
+          <ul className="app__alerts-grid">
             {alerts.map((alert) => (
-              <AlertCard key={alert.id} {...alert} />
+              <li key={alert.id}>
+                <AlertCard {...alert} />
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </section>
 
@@ -83,3 +94,5 @@ export function Dashboard() {
     </>
   );
 }
+
+

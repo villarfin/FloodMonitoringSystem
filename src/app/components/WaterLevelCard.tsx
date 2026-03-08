@@ -1,9 +1,9 @@
-// Simple Water Level Card Component
+﻿// Simple Water Level Card Component
 // Shows water level information for one location
 
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-import "./WaterLevelCard.css";
+import "../styles/components/WaterLevelCard.css";
 
 // Props that this component receives
 interface WaterLevelCardProps {
@@ -63,3 +63,5 @@ export function WaterLevelCard({
     </Card>
   );
 }
+
+

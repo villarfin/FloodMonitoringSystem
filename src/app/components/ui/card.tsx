@@ -1,5 +1,5 @@
-import * as React from "react";
-import "./card.css";
+﻿import * as React from "react";
+import "../../styles/ui/card.css";
 
 import { cn } from "./utils";
 
@@ -82,3 +82,5 @@ export {
   CardDescription,
   CardContent,
 };
+
+

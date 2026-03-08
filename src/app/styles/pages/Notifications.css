@@ -69,6 +69,9 @@
 .app__notif-list {
   display: grid;
   gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .app__notif-card {

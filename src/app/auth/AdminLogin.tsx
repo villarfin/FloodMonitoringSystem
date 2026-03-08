@@ -1,10 +1,10 @@
-import { FormEvent } from "react";
+﻿import { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router";
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import "./AdminLogin.css";
+import "../styles/auth/AdminLogin.css";
 
 interface AdminLoginProps {
   onLogin: () => void;
@@ -102,3 +102,5 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     </div>
   );
 }
+
+
