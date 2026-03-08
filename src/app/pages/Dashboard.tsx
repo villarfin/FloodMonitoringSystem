@@ -1,12 +1,11 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { AlertCard } from "../components/AlertCard";
 import { StatsCard } from "../components/StatsCard";
-import { WeatherPanel } from "../components/WeatherPanel";
 import { Button } from "../components/ui/button";
 import { monitoredWaters } from "../data/monitoredWaters";
-import "../styles/pages/Dashboard.css";
+import "./Dashboard.css";
 
 export function Dashboard() {
   const [showAlerts, setShowAlerts] = useState(true);
@@ -35,33 +34,21 @@ export function Dashboard() {
     <>
       <section className="app__section">
         <h2 className="app__section-title">Overview Statistics</h2>
-        <ul className="app__stats-grid">
+        <div className="app__stats-grid">
           {stats.map((stat) => (
-            <li key={stat.id}>
-              <StatsCard label={stat.label} value={stat.value} icon={stat.icon} />
-            </li>
+            <StatsCard key={stat.id} label={stat.label} value={stat.value} icon={stat.icon} />
           ))}
-        </ul>
-      </section>
-
-      <section className="app__section">
-        <div className="app__alerts-header">
-          <h2 className="app__section-title app__section-title--no-margin">Water Levels by Location</h2>
-          <Link to="/monitoring" className="app__page-link">
-            View All Monitored Waters
-          </Link>
         </div>
-        <ul className="app__water-grid">
-          {featuredWaters.map((loc) => (
-            <li key={loc.id}>
-              <WaterLevelCard {...loc} />
-            </li>
-          ))}
-        </ul>
-      </section>
+        {/* Water Level List takes up 1 column */}
+        <div className="lg:col-span-1 h-[400px]">
+          <WaterLevelList />
+        </div>
+      </div>
 
-      <section className="app__section">
-        <WeatherPanel />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <TrendChart />
+        </div>
       </section>
 
       <section className="app__section">
@@ -72,13 +59,11 @@ export function Dashboard() {
           </Button>
         </div>
         {showAlerts && (
-          <ul className="app__alerts-grid">
+          <div className="app__alerts-grid">
             {alerts.map((alert) => (
-              <li key={alert.id}>
-                <AlertCard {...alert} />
-              </li>
+              <AlertCard key={alert.id} {...alert} />
             ))}
-          </ul>
+          </div>
         )}
       </section>
 
@@ -94,5 +79,3 @@ export function Dashboard() {
     </>
   );
 }
-
-
