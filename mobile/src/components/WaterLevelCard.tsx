@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { MonitoredWater } from "../types";
 import { MobileCard } from "./MobileCard";
 import { StatusBadge } from "./StatusBadge";
@@ -6,7 +6,7 @@ import { colors } from "../styles/theme";
 
 type WaterLevelCardProps = Pick<
   MonitoredWater,
-  "locationName" | "currentLevel" | "maxLevel" | "status"
+  "locationName" | "currentLevel" | "maxLevel" | "status" | "imageSource"
 >;
 
 export function WaterLevelCard({
@@ -14,6 +14,7 @@ export function WaterLevelCard({
   currentLevel,
   maxLevel,
   status,
+  imageSource,
 }: WaterLevelCardProps) {
   const percentage = Math.max(0, Math.min((currentLevel / maxLevel) * 100, 100));
   const fillColor =
@@ -21,6 +22,7 @@ export function WaterLevelCard({
 
   return (
     <MobileCard>
+      <Image source={imageSource} style={styles.cover} />
       <View style={styles.header}>
         <Text style={styles.title}>{locationName}</Text>
         <StatusBadge status={status} />
@@ -36,6 +38,12 @@ export function WaterLevelCard({
 }
 
 const styles = StyleSheet.create({
+  cover: {
+    width: "100%",
+    height: 120,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -75,4 +83,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-

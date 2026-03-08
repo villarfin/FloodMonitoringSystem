@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { ScreenLayout } from "../components/ScreenLayout";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { monitoredWaters } from "../data/monitoredWaters";
@@ -21,6 +21,7 @@ export function MonitoringScreen() {
             <WaterLevelCard {...location} />
             {isActive ? (
               <View style={styles.detailCard}>
+                <Image source={location.imageSource} style={styles.detailImage} />
                 <Text style={styles.detailText}><Text style={styles.bold}>Type:</Text> {location.locationType}</Text>
                 <Text style={styles.detailText}><Text style={styles.bold}>Trend:</Text> {location.trend}</Text>
                 <Text style={styles.detailText}><Text style={styles.bold}>Barangay:</Text> {location.barangay}</Text>
@@ -54,6 +55,12 @@ const styles = StyleSheet.create({
     marginTop: -6,
     marginBottom: 8,
   },
+  detailImage: {
+    width: "100%",
+    height: 130,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
   detailText: {
     color: colors.textMuted,
     marginBottom: 4,
@@ -67,4 +74,3 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
-

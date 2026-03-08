@@ -10,9 +10,10 @@ interface AlertCardProps {
 
 export function AlertCard({ title, message, type }: AlertCardProps) {
   const tint = type === "danger" ? colors.danger : type === "warning" ? colors.warning : colors.brand;
+  const bg = type === "danger" ? "#f7eded" : type === "warning" ? "#f4f0df" : "#eaf2ff";
 
   return (
-    <View style={[styles.wrap, { borderLeftColor: tint }]}>
+    <View style={[styles.wrap, { borderLeftColor: tint, backgroundColor: bg }]}>
       <MobileCard>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.message}>{message}</Text>
@@ -39,4 +40,3 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
 });
-

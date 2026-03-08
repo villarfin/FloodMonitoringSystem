@@ -1,13 +1,11 @@
 import { RootStackParamList } from "../types";
 
-export const appScreens: Array<Exclude<keyof RootStackParamList, "AdminLogin">> = [
+export const appScreens: Array<
+  "Dashboard" | "Monitoring" | "IncidentReport" | "Notifications" | "Summary"
+> = [
   "Dashboard",
-  "Admin",
-  "UserManagement",
   "Monitoring",
   "IncidentReport",
   "Notifications",
   "Summary",
-  "Configuration",
 ];
-

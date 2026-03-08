@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 export type WaterStatus = "Safe" | "Warning" | "Danger";
 export type WaterTrend = "Rising" | "Stable" | "Falling";
 
@@ -14,6 +16,7 @@ export interface MonitoredWater {
   trend: WaterTrend;
   lastUpdated: string;
   notes: string;
+  imageSource: ImageSourcePropType;
 }
 
 export type NotificationType = "Tsunami" | "Flood" | "Rainfall";
@@ -28,14 +31,9 @@ export interface NotificationItem {
 }
 
 export type RootStackParamList = {
-  AdminLogin: undefined;
   Dashboard: undefined;
-  Admin: undefined;
-  UserManagement: undefined;
   Monitoring: undefined;
   IncidentReport: undefined;
   Notifications: undefined;
   Summary: undefined;
-  Configuration: undefined;
 };
-

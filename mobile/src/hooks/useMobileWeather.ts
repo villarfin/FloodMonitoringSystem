@@ -7,6 +7,19 @@ export type MobileWeatherPayload = {
   windSpeed: number;
   weatherCode: number;
   hourlyPrecipPeak: number;
+  observedAt: string;
+  hourly: Array<{
+    time: string;
+    temperature: number;
+    precipitation: number;
+    wind: number;
+  }>;
+  daily: Array<{
+    date: string;
+    weatherCode: number;
+    max: number;
+    min: number;
+  }>;
 };
 
 const FALLBACK = { latitude: 8.4822, longitude: 124.6472, name: "Kauswagan, Cagayan de Oro City" };
@@ -15,7 +28,8 @@ async function fetchMobileWeather(latitude: number, longitude: number): Promise<
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
     "&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code" +
-    "&hourly=precipitation_probability&timezone=auto&forecast_days=1";
+    "&hourly=temperature_2m,precipitation_probability,wind_speed_10m,weather_code" +
+    "&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7";
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -23,9 +37,31 @@ async function fetchMobileWeather(latitude: number, longitude: number): Promise<
   }
 
   const json = await response.json();
-  const hourlyPrecip = Array.isArray(json?.hourly?.precipitation_probability)
-    ? json.hourly.precipitation_probability.map((v: unknown) => Number(v ?? 0))
-    : [];
+  const hourlyPrecip = Array.isArray(json?.hourly?.precipitation_probability) ? json.hourly.precipitation_probability : [];
+  const hourlyTimes: string[] = json?.hourly?.time ?? [];
+  const currentTime = String(json?.current?.time ?? hourlyTimes[0] ?? "");
+  const startIndex = Math.max(hourlyTimes.findIndex((entry) => entry >= currentTime), 0);
+  const endIndex = Math.min(startIndex + 12, hourlyTimes.length);
+  const hourly = [];
+  for (let i = startIndex; i < endIndex; i += 1) {
+    hourly.push({
+      time: hourlyTimes[i],
+      temperature: Number(json?.hourly?.temperature_2m?.[i] ?? 0),
+      precipitation: Number(json?.hourly?.precipitation_probability?.[i] ?? 0),
+      wind: Number(json?.hourly?.wind_speed_10m?.[i] ?? 0),
+    });
+  }
+
+  const dailyTimes: string[] = json?.daily?.time ?? [];
+  const daily = [];
+  for (let i = 0; i < Math.min(7, dailyTimes.length); i += 1) {
+    daily.push({
+      date: dailyTimes[i],
+      weatherCode: Number(json?.daily?.weather_code?.[i] ?? 0),
+      max: Number(json?.daily?.temperature_2m_max?.[i] ?? 0),
+      min: Number(json?.daily?.temperature_2m_min?.[i] ?? 0),
+    });
+  }
 
   return {
     temperature: Number(json?.current?.temperature_2m ?? 0),
@@ -33,7 +69,10 @@ async function fetchMobileWeather(latitude: number, longitude: number): Promise<
     precipitation: Number(json?.current?.precipitation ?? 0),
     windSpeed: Number(json?.current?.wind_speed_10m ?? 0),
     weatherCode: Number(json?.current?.weather_code ?? 0),
-    hourlyPrecipPeak: Math.max(...hourlyPrecip, 0),
+    hourlyPrecipPeak: Math.max(...hourlyPrecip.map((v: unknown) => Number(v ?? 0)), 0),
+    observedAt: currentTime,
+    hourly,
+    daily,
   };
 }
 
@@ -62,4 +101,3 @@ export function useMobileWeather() {
 
   return { status, error, payload, locationName, loadWeather };
 }
-

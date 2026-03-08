@@ -14,6 +14,7 @@ export const monitoredWaters: MonitoredWater[] = [
     trend: "Rising",
     lastUpdated: "09:12 AM",
     notes: "Rapid increase after heavy rainfall upstream.",
+    imageSource: require("../../assets/waters/cagayan-de-oro-river.jpg"),
   },
   {
     id: "bigaan-river",
@@ -28,6 +29,7 @@ export const monitoredWaters: MonitoredWater[] = [
     trend: "Stable",
     lastUpdated: "09:08 AM",
     notes: "Within normal range for this time.",
+    imageSource: require("../../assets/waters/bigaan-river.jpg"),
   },
   {
     id: "bitanag-creek",
@@ -42,6 +44,7 @@ export const monitoredWaters: MonitoredWater[] = [
     trend: "Rising",
     lastUpdated: "09:11 AM",
     notes: "Approaching warning threshold due to runoff.",
+    imageSource: require("../../assets/waters/bitan-ag-creek.jpg"),
   },
   {
     id: "kauswagan-canal",
@@ -56,6 +59,7 @@ export const monitoredWaters: MonitoredWater[] = [
     trend: "Falling",
     lastUpdated: "09:05 AM",
     notes: "Water is draining after early morning rain.",
+    imageSource: require("../../assets/waters/kauswagan-canal.jpg"),
   },
   {
     id: "taguanao-creek",
@@ -70,6 +74,7 @@ export const monitoredWaters: MonitoredWater[] = [
     trend: "Stable",
     lastUpdated: "09:10 AM",
     notes: "Sustained high flow along low-lying sections.",
+    imageSource: require("../../assets/waters/taguanao-creek.jpg"),
   },
   {
     id: "iponan-river",
@@ -84,6 +89,6 @@ export const monitoredWaters: MonitoredWater[] = [
     trend: "Rising",
     lastUpdated: "09:14 AM",
     notes: "Strong upstream inflow; evacuation team notified.",
+    imageSource: require("../../assets/waters/iponan-river.jpg"),
   },
 ];
-

@@ -1,34 +1,38 @@
-import { Pressable, StyleSheet, Text } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StyleSheet, Text, View } from "react-native";
 import { ScreenLayout } from "../components/ScreenLayout";
-import { RootStackParamList } from "../types";
 import { colors } from "../styles/theme";
 
 export function SummaryScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
   return (
     <ScreenLayout title="Summary" subtitle="A high-level summary of system state can be shown here.">
-      <Pressable style={styles.action} onPress={() => navigation.navigate("Configuration")}>
-        <Text style={styles.actionText}>Go to Configuration</Text>
-      </Pressable>
+      <View style={styles.card}>
+        <Text style={styles.label}>Daily Situation Summary</Text>
+        <Text style={styles.value}>2 Danger, 2 Warning, 2 Safe monitored waters</Text>
+        <Text style={styles.note}>Use Monitoring and Notifications for detailed updates.</Text>
+      </View>
     </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  action: {
+  card: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.brand,
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#e7efff",
+    borderColor: colors.border,
+    padding: 12,
+    backgroundColor: colors.surface,
   },
-  actionText: {
-    color: colors.brand,
+  label: {
+    color: colors.textMuted,
+    fontSize: 12,
+  },
+  value: {
+    color: colors.text,
     fontWeight: "700",
+    marginTop: 3,
+  },
+  note: {
+    color: colors.textMuted,
+    marginTop: 8,
   },
 });
-
