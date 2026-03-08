@@ -142,7 +142,7 @@ export function useWeather() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        await loadByCoords(position.coords.latitude, position.coords.longitude, "Current Location");
+        await loadByCoords(position.coords.latitude, position.coords.longitude);
       },
       async () => {
         await loadByCoords(FALLBACK_COORDS.latitude, FALLBACK_COORDS.longitude, FALLBACK_COORDS.name);
@@ -155,7 +155,7 @@ export function useWeather() {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        await loadByCoords(position.coords.latitude, position.coords.longitude, "Current Location");
+        await loadByCoords(position.coords.latitude, position.coords.longitude);
       },
       async () => {
         setErrorMessage("Precise location denied. Keeping current weather data.");
