@@ -110,7 +110,7 @@ export function WeatherPanel({ onOpenAlerts, onWeatherAlertsChange }: WeatherPan
               <p className="weather-panel__current-icon">{getWeatherIcon(payload.current.weatherCode)}</p>
               <p className="weather-panel__temperature">{Math.round(payload.current.temperature)}C</p>
               <ul className="weather-panel__quick-stats">
-                <li>Precipitation: {Math.round(payload.current.precipitation)}%</li>
+                <li>Precipitation: {Math.round(payload.current.precipitationProbability)}%</li>
                 <li>Humidity: {Math.round(payload.current.humidity)}%</li>
                 <li>Wind: {Math.round(payload.current.windSpeed)} km/h</li>
               </ul>

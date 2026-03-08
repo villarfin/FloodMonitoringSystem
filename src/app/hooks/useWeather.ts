@@ -6,6 +6,7 @@ export type CurrentWeather = {
   temperature: number;
   humidity: number;
   precipitation: number;
+  precipitationProbability: number;
   windSpeed: number;
   weatherCode: number;
   observedAt: string;
@@ -100,6 +101,7 @@ async function fetchWeather(latitude: number, longitude: number): Promise<Weathe
       temperature: Number(json.current.temperature_2m ?? 0),
       humidity: Number(json.current.relative_humidity_2m ?? 0),
       precipitation: Number(json.current.precipitation ?? 0),
+      precipitationProbability: Number(json.hourly.precipitation_probability?.[startIndex] ?? 0),
       windSpeed: Number(json.current.wind_speed_10m ?? 0),
       weatherCode: Number(json.current.weather_code ?? 0),
       observedAt: currentTime,

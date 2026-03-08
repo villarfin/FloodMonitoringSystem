@@ -3,7 +3,7 @@ import { WeatherPayload } from "../hooks/useWeather";
 
 export function deriveWeatherAlerts(payload: WeatherPayload): ActiveAlert[] {
   const alerts: ActiveAlert[] = [];
-  const precipitationNow = payload.current.precipitation;
+  const precipitationNow = payload.current.precipitationProbability;
   const windNow = payload.current.windSpeed;
   const weatherCode = payload.current.weatherCode;
   const hourlyPrecipPeak = Math.max(...payload.hourly.map((point) => point.precipitation), 0);
@@ -51,4 +51,3 @@ export function deriveWeatherAlerts(payload: WeatherPayload): ActiveAlert[] {
 
   return alerts;
 }
-
