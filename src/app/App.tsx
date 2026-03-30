@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "react-router";
 import { NavBar } from "./components/NavBar";
 import { Dashboard } from "./pages/Dashboard";
@@ -29,9 +29,7 @@ function AppLayout({ onLogout }: AppLayoutProps) {
       </header>
 
       <div className="app__workspace">
-        <aside className="app__sidebar" aria-label="Primary navigation">
-          <NavBar onLogout={onLogout} />
-        </aside>
+        <NavBar onLogout={onLogout} />
 
         <main className="app__main">
           <Outlet />
@@ -70,20 +68,18 @@ export default function App() {
         <Route path="/admin/login" element={<AdminLogin onLogin={() => setIsSignedIn(true)} />} />
         <Route path="/login" element={<Navigate to="/admin/login" replace />} />
         <Route element={<ProtectedLayout isSignedIn={isSignedIn} onLogout={handleLogout} />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Navigate to="/" replace />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/users" element={<UserManagement />} />
-            <Route path="/monitoring" element={<Monitoring />} />
-            <Route path="/incident-report" element={<IncidentReport />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/summary" element={<Summary />} />
-            <Route path="/configuration" element={<Configuration />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/monitoring" element={<Monitoring />} />
+          <Route path="/incident-report" element={<IncidentReport />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/summary" element={<Summary />} />
+          <Route path="/configuration" element={<Configuration />} />
         </Route>
         <Route path="*" element={<Navigate to={isSignedIn ? "/" : "/admin/login"} replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
-
-

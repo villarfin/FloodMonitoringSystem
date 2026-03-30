@@ -35,5 +35,4 @@ export type RootStackParamList = {
   Monitoring: undefined;
   IncidentReport: undefined;
   Notifications: undefined;
-  Summary: undefined;
 };
