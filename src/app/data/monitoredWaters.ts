@@ -1,3 +1,8 @@
+export interface WaterReading {
+  timestamp: string;
+  level: number;
+}
+
 export interface MonitoredWater {
   id: string;
   locationName: string;
@@ -12,6 +17,7 @@ export interface MonitoredWater {
   lastUpdated: string;
   notes: string;
   imageUrl: string;
+  readings: WaterReading[];
 }
 
 export const monitoredWaters: MonitoredWater[] = [
@@ -29,6 +35,17 @@ export const monitoredWaters: MonitoredWater[] = [
     lastUpdated: "09:12 AM",
     notes: "Rapid increase after heavy rainfall upstream.",
     imageUrl: "/waters/cagayan-de-oro-river.jpg",
+    readings: [
+      { timestamp: "2026-03-30T09:00:00+08:00", level: 4.7 },
+      { timestamp: "2026-03-30T12:00:00+08:00", level: 5.1 },
+      { timestamp: "2026-03-30T15:00:00+08:00", level: 5.8 },
+      { timestamp: "2026-03-30T18:00:00+08:00", level: 6.2 },
+      { timestamp: "2026-03-30T21:00:00+08:00", level: 6.9 },
+      { timestamp: "2026-03-31T00:00:00+08:00", level: 7.1 },
+      { timestamp: "2026-03-31T03:00:00+08:00", level: 7.4 },
+      { timestamp: "2026-03-31T06:00:00+08:00", level: 7.7 },
+      { timestamp: "2026-03-31T09:00:00+08:00", level: 8.0 },
+    ],
   },
   {
     id: "bigaan-river",
@@ -44,6 +61,17 @@ export const monitoredWaters: MonitoredWater[] = [
     lastUpdated: "09:08 AM",
     notes: "Within normal range for this time.",
     imageUrl: "/waters/bigaan-river.jpg",
+    readings: [
+      { timestamp: "2026-03-30T09:00:00+08:00", level: 3.8 },
+      { timestamp: "2026-03-30T12:00:00+08:00", level: 3.9 },
+      { timestamp: "2026-03-30T15:00:00+08:00", level: 4.0 },
+      { timestamp: "2026-03-30T18:00:00+08:00", level: 4.1 },
+      { timestamp: "2026-03-30T21:00:00+08:00", level: 4.2 },
+      { timestamp: "2026-03-31T00:00:00+08:00", level: 4.0 },
+      { timestamp: "2026-03-31T03:00:00+08:00", level: 4.1 },
+      { timestamp: "2026-03-31T06:00:00+08:00", level: 4.0 },
+      { timestamp: "2026-03-31T09:00:00+08:00", level: 4.1 },
+    ],
   },
   {
     id: "bitanag-creek",
@@ -59,6 +87,17 @@ export const monitoredWaters: MonitoredWater[] = [
     lastUpdated: "09:11 AM",
     notes: "Approaching warning threshold due to runoff.",
     imageUrl: "/waters/bitan-ag-creek.jpg",
+    readings: [
+      { timestamp: "2026-03-30T09:00:00+08:00", level: 5.2 },
+      { timestamp: "2026-03-30T12:00:00+08:00", level: 5.5 },
+      { timestamp: "2026-03-30T15:00:00+08:00", level: 5.9 },
+      { timestamp: "2026-03-30T18:00:00+08:00", level: 6.1 },
+      { timestamp: "2026-03-30T21:00:00+08:00", level: 6.4 },
+      { timestamp: "2026-03-31T00:00:00+08:00", level: 6.6 },
+      { timestamp: "2026-03-31T03:00:00+08:00", level: 6.8 },
+      { timestamp: "2026-03-31T06:00:00+08:00", level: 6.9 },
+      { timestamp: "2026-03-31T09:00:00+08:00", level: 7.0 },
+    ],
   },
   {
     id: "kauswagan-canal",
@@ -74,6 +113,17 @@ export const monitoredWaters: MonitoredWater[] = [
     lastUpdated: "09:05 AM",
     notes: "Water is draining after early morning rain.",
     imageUrl: "/waters/kauswagan-canal.jpg",
+    readings: [
+      { timestamp: "2026-03-30T09:00:00+08:00", level: 4.8 },
+      { timestamp: "2026-03-30T12:00:00+08:00", level: 4.6 },
+      { timestamp: "2026-03-30T15:00:00+08:00", level: 4.4 },
+      { timestamp: "2026-03-30T18:00:00+08:00", level: 4.2 },
+      { timestamp: "2026-03-30T21:00:00+08:00", level: 4.0 },
+      { timestamp: "2026-03-31T00:00:00+08:00", level: 3.9 },
+      { timestamp: "2026-03-31T03:00:00+08:00", level: 3.7 },
+      { timestamp: "2026-03-31T06:00:00+08:00", level: 3.6 },
+      { timestamp: "2026-03-31T09:00:00+08:00", level: 3.5 },
+    ],
   },
   {
     id: "taguanao-creek",
@@ -89,6 +139,17 @@ export const monitoredWaters: MonitoredWater[] = [
     lastUpdated: "09:10 AM",
     notes: "Sustained high flow along low-lying sections.",
     imageUrl: "/waters/taguanao-creek.jpg",
+    readings: [
+      { timestamp: "2026-03-30T09:00:00+08:00", level: 6.4 },
+      { timestamp: "2026-03-30T12:00:00+08:00", level: 6.6 },
+      { timestamp: "2026-03-30T15:00:00+08:00", level: 6.8 },
+      { timestamp: "2026-03-30T18:00:00+08:00", level: 6.9 },
+      { timestamp: "2026-03-30T21:00:00+08:00", level: 7.0 },
+      { timestamp: "2026-03-31T00:00:00+08:00", level: 6.9 },
+      { timestamp: "2026-03-31T03:00:00+08:00", level: 6.8 },
+      { timestamp: "2026-03-31T06:00:00+08:00", level: 6.9 },
+      { timestamp: "2026-03-31T09:00:00+08:00", level: 6.9 },
+    ],
   },
   {
     id: "iponan-river",
@@ -104,5 +165,16 @@ export const monitoredWaters: MonitoredWater[] = [
     lastUpdated: "09:14 AM",
     notes: "Strong upstream inflow; evacuation team notified.",
     imageUrl: "/waters/iponan-river.jpg",
+    readings: [
+      { timestamp: "2026-03-30T09:00:00+08:00", level: 6.0 },
+      { timestamp: "2026-03-30T12:00:00+08:00", level: 6.3 },
+      { timestamp: "2026-03-30T15:00:00+08:00", level: 6.7 },
+      { timestamp: "2026-03-30T18:00:00+08:00", level: 7.4 },
+      { timestamp: "2026-03-30T21:00:00+08:00", level: 7.9 },
+      { timestamp: "2026-03-31T00:00:00+08:00", level: 8.3 },
+      { timestamp: "2026-03-31T03:00:00+08:00", level: 8.7 },
+      { timestamp: "2026-03-31T06:00:00+08:00", level: 9.0 },
+      { timestamp: "2026-03-31T09:00:00+08:00", level: 9.2 },
+    ],
   },
 ];

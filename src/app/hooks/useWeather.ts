@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 export type WeatherStatus = "idle" | "loading" | "success" | "error";
+export type WeatherLocationSource = "fallback" | "browser" | "precise";
 
 export type CurrentWeather = {
   temperature: number;
@@ -32,6 +33,8 @@ export type WeatherPayload = {
   daily: DailyPoint[];
 };
 
+type LoadMode = "fallback" | "browser" | "precise";
+
 const FALLBACK_COORDS = { latitude: 8.4822, longitude: 124.6472, name: "Kauswagan, Cagayan de Oro City" };
 
 async function fetchLocationName(latitude: number, longitude: number): Promise<string | null> {
@@ -44,9 +47,7 @@ async function fetchLocationName(latitude: number, longitude: number): Promise<s
     const reverseJson = await reverseResponse.json();
     const first = Array.isArray(reverseJson.results) ? reverseJson.results[0] : null;
     if (!first) return null;
-    const city = String(first.name ?? "").trim();
-    const admin = String(first.admin1 ?? "").trim();
-    if (city && admin) return `${city}, ${admin}`;
+    const city = String(first.city ?? first.town ?? first.village ?? first.municipality ?? first.name ?? "").trim();
     return city || null;
   } catch {
     return null;
@@ -116,8 +117,14 @@ export function useWeather() {
   const [errorMessage, setErrorMessage] = useState("");
   const [locationName, setLocationName] = useState(FALLBACK_COORDS.name);
   const [payload, setPayload] = useState<WeatherPayload | null>(null);
+  const [locationSource, setLocationSource] = useState<WeatherLocationSource>("fallback");
 
-  const loadByCoords = useCallback(async (latitude: number, longitude: number, fallbackLabel?: string) => {
+  const loadByCoords = useCallback(async (
+    latitude: number,
+    longitude: number,
+    fallbackLabel?: string,
+    mode: LoadMode = "fallback",
+  ) => {
     setStatus("loading");
     setErrorMessage("");
     try {
@@ -125,8 +132,12 @@ export function useWeather() {
         fetchWeather(latitude, longitude),
         fetchLocationName(latitude, longitude),
       ]);
+      const fallbackLocationLabel =
+        mode === "fallback" ? FALLBACK_COORDS.name : "Location unavailable";
+
       setPayload(weather);
-      setLocationName(place || fallbackLabel || FALLBACK_COORDS.name);
+      setLocationName(place || fallbackLabel || fallbackLocationLabel);
+      setLocationSource(mode);
       setStatus("success");
     } catch (error) {
       setStatus("error");
@@ -136,16 +147,31 @@ export function useWeather() {
 
   const loadWeather = useCallback(async () => {
     if (!navigator.geolocation) {
-      await loadByCoords(FALLBACK_COORDS.latitude, FALLBACK_COORDS.longitude, FALLBACK_COORDS.name);
+      await loadByCoords(
+        FALLBACK_COORDS.latitude,
+        FALLBACK_COORDS.longitude,
+        FALLBACK_COORDS.name,
+        "fallback",
+      );
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        await loadByCoords(position.coords.latitude, position.coords.longitude);
+        await loadByCoords(
+          position.coords.latitude,
+          position.coords.longitude,
+          undefined,
+          "browser",
+        );
       },
       async () => {
-        await loadByCoords(FALLBACK_COORDS.latitude, FALLBACK_COORDS.longitude, FALLBACK_COORDS.name);
+        await loadByCoords(
+          FALLBACK_COORDS.latitude,
+          FALLBACK_COORDS.longitude,
+          FALLBACK_COORDS.name,
+          "fallback",
+        );
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 120000 },
     );
@@ -155,7 +181,12 @@ export function useWeather() {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        await loadByCoords(position.coords.latitude, position.coords.longitude);
+        await loadByCoords(
+          position.coords.latitude,
+          position.coords.longitude,
+          undefined,
+          "precise",
+        );
       },
       async () => {
         setErrorMessage("Precise location denied. Keeping current weather data.");
@@ -180,6 +211,7 @@ export function useWeather() {
     status,
     errorMessage,
     locationName,
+    locationSource,
     payload,
     loadWeather,
     usePreciseLocation,

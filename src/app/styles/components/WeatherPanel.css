@@ -26,6 +26,12 @@
   color: #f8fbff;
 }
 
+.weather-panel__source {
+  margin: 0.25rem 0 0;
+  color: #9bb4d8;
+  font-size: 0.78rem;
+}
+
 .weather-panel__header-actions {
   display: flex;
   gap: 0.45rem;

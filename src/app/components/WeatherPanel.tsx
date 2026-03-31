@@ -45,9 +45,24 @@ interface WeatherPanelProps {
 }
 
 export function WeatherPanel({ onOpenAlerts, onWeatherAlertsChange }: WeatherPanelProps) {
-  const { status, errorMessage, locationName, payload, loadWeather, usePreciseLocation } = useWeather();
+  const {
+    status,
+    errorMessage,
+    locationName,
+    locationSource,
+    payload,
+    loadWeather,
+    usePreciseLocation,
+  } = useWeather();
   const [metric, setMetric] = useState<MetricType>("temperature");
   const weatherLinkedAlerts = useMemo(() => (payload ? deriveWeatherAlerts(payload) : []), [payload]);
+
+  const sourceLabel =
+    locationSource === "precise"
+      ? "Using precise device location"
+      : locationSource === "browser"
+        ? "Using current browser location"
+        : "Using fallback monitored area";
 
   useEffect(() => {
     onWeatherAlertsChange(weatherLinkedAlerts);
@@ -84,6 +99,7 @@ export function WeatherPanel({ onOpenAlerts, onWeatherAlertsChange }: WeatherPan
         <div>
           <p className="weather-panel__result-label">Results for</p>
           <h3 className="weather-panel__title">{locationName}</h3>
+          <p className="weather-panel__source">{sourceLabel}</p>
         </div>
         <div className="weather-panel__header-actions">
           <button type="button" className="weather-panel__action" onClick={usePreciseLocation}>
@@ -99,7 +115,7 @@ export function WeatherPanel({ onOpenAlerts, onWeatherAlertsChange }: WeatherPan
 
       {status === "error" && (
         <p className="weather-panel__state weather-panel__state--error">
-          {errorMessage}. Showing cached/fallback area weather when available.
+          {errorMessage}. Showing fallback monitored area weather when available.
         </p>
       )}
 
