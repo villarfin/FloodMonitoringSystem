@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -7,8 +7,9 @@ import { ScreenLayout } from "../components/ScreenLayout";
 import { StatsCard } from "../components/StatsCard";
 import { WaterLevelCard } from "../components/WaterLevelCard";
 import { WeatherPanel } from "../components/WeatherPanel";
-import { ActiveAlert, activeAlerts as seedAlerts } from "../data/activeAlerts";
-import { monitoredWaters } from "../data/monitoredWaters";
+import { ActiveAlert, activeAlerts as staticAlerts } from "../data/activeAlerts";
+import { monitoredWaters as staticWaters } from "../data/monitoredWaters";
+import { api } from "../utils/api";
 import { RootStackParamList } from "../types";
 import { styles } from "../styles/pages/DashboardScreen.styles";
 
@@ -16,22 +17,45 @@ export function DashboardScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showAlerts, setShowAlerts] = useState(true);
   const [weatherAlerts, setWeatherAlerts] = useState<ActiveAlert[]>([]);
+  const [locations, setLocations] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const featuredWaters = monitoredWaters.slice(0, 3);
-  const safeCount = monitoredWaters.filter((item) => item.status === "Safe").length;
-  const alertCount = monitoredWaters.filter((item) => item.status !== "Safe").length;
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [locData, alertData] = await Promise.all([
+          api.getLocations(),
+          api.getAlerts()
+        ]);
+        setLocations(locData);
+        setAlerts(alertData);
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+        setLocations(staticWaters);
+        setAlerts(staticAlerts);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const monitoredData = locations.length > 0 ? locations : staticWaters;
+  const featuredWaters = monitoredData.slice(0, 3);
+  const safeCount = monitoredData.filter((item) => item.status === "Safe" || item.level === "Safe").length;
+  const alertCount = monitoredData.filter((item) => item.status !== "Safe" && item.level !== "Safe").length;
 
   const stats = useMemo(
     () => [
-      { id: "total-locations", label: "Total Locations", value: String(monitoredWaters.length), icon: "📍" },
+      { id: "total-locations", label: "Total Locations", value: String(monitoredData.length), icon: "📍" },
       { id: "active-alerts", label: "Active Alerts", value: String(alertCount), icon: "⚠️" },
       { id: "safe-areas", label: "Safe Areas", value: String(safeCount), icon: "✅" },
     ],
-    [alertCount, safeCount],
+    [monitoredData, alertCount, safeCount],
   );
 
-  const nonWeatherAlerts = seedAlerts.filter((alert) => alert.id !== "a2");
-  const alerts = [...nonWeatherAlerts, ...weatherAlerts];
+  const allAlerts = [...alerts, ...weatherAlerts];
 
   return (
     <ScreenLayout title="Dashboard" subtitle="Real-time water level monitoring and alerts">
@@ -47,7 +71,14 @@ export function DashboardScreen() {
         </Pressable>
       </View>
       {featuredWaters.map((loc) => (
-        <WaterLevelCard key={loc.id} {...loc} />
+        <WaterLevelCard 
+          key={loc.id} 
+          locationName={loc.name || loc.locationName} 
+          currentLevel={loc.currentLevel || loc.current_level || 0} 
+          maxLevel={loc.maxLevel || loc.max_level || 10} 
+          status={loc.status || "Safe"} 
+          imageSource={loc.imageSource || require("../../assets/waters/cagayan-de-oro-river.jpg")}
+        />
       ))}
 
       <Text style={styles.sectionTitle}>Weather</Text>
@@ -60,7 +91,14 @@ export function DashboardScreen() {
         </Pressable>
       </View>
       {showAlerts
-        ? alerts.map((alert) => <AlertCard key={alert.id} {...alert} />)
+        ? allAlerts.map((alert, idx) => (
+            <AlertCard 
+              key={alert.id || idx} 
+              title={alert.title || alert.level} 
+              message={alert.message || alert.description} 
+              type={alert.type || alert.level?.toLowerCase()} 
+            />
+          ))
         : <Text style={styles.helpText}>Alerts are hidden.</Text>}
 
       <Text style={styles.sectionTitle}>How to Use</Text>
