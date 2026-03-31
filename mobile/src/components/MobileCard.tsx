@@ -1,7 +1,10 @@
 import { PropsWithChildren } from "react";
-import { View } from "react-native";
+import { StyleProp, View, ViewStyle } from "react-native";
 import { styles } from "../styles/components/MobileCard.styles";
 
-export function MobileCard({ children }: PropsWithChildren) {
-  return <View style={styles.card}>{children}</View>;
+export function MobileCard({
+  children,
+  style,
+}: PropsWithChildren<{ style?: StyleProp<ViewStyle> }>) {
+  return <View style={[styles.card, style]}>{children}</View>;
 }

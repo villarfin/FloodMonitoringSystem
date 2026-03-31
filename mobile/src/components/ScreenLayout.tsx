@@ -1,70 +1,50 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { appScreens } from "../navigation/screenNames";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RootStackParamList } from "../types";
 import { styles } from "../styles/components/ScreenLayout.styles";
 
-interface ScreenLayoutProps extends PropsWithChildren {
-  title: string;
-  subtitle?: string;
-}
+const bottomTabs: Array<{
+  screen: keyof RootStackParamList;
+  label: string;
+}> = [
+  { screen: "Dashboard", label: "Dashboard" },
+  { screen: "Monitoring", label: "Monitoring" },
+  { screen: "IncidentReport", label: "Incident Report" },
+];
 
-const screenLabels: Record<(typeof appScreens)[number], string> = {
-  Dashboard: "Dashboard",
-  Monitoring: "Monitoring",
-  IncidentReport: "Incident Report",
-  Notifications: "Notifications",
-};
-
-export function ScreenLayout({ title, subtitle, children }: ScreenLayoutProps) {
+export function ScreenLayout({ title, subtitle, children }: PropsWithChildren<{ title: string; subtitle?: string }>) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [route.name]);
 
   return (
     <SafeAreaView style={styles.screen} edges={["top", "bottom"]}>
-      <View style={styles.menuAnchor}>
+      <View style={styles.header}>
+        <Text style={styles.brand}>FMS</Text>
         <Pressable
-          onPress={() => setMenuOpen((current) => !current)}
-          style={styles.menuButton}
+          onPress={() => navigation.navigate("Notifications")}
+          style={styles.notificationButton}
           accessibilityRole="button"
-          accessibilityLabel="Open navigation menu"
-          accessibilityState={{ expanded: menuOpen }}
+          accessibilityLabel="Open notifications"
         >
-          <View style={styles.hamburger}>
-            <View style={styles.hamburgerLine} />
-            <View style={styles.hamburgerLine} />
-            <View style={styles.hamburgerLine} />
-          </View>
+          <MaterialCommunityIcons name="bell-outline" size={22} color="#ffffff" />
+          <View style={styles.notificationBadge} />
         </Pressable>
       </View>
 
-      {menuOpen ? <Pressable style={styles.backdrop} onPress={() => setMenuOpen(false)} /> : null}
-
-      <View pointerEvents={menuOpen ? "auto" : "none"} style={[styles.menuPanel, menuOpen && styles.menuPanelOpen]}>
-        <View style={styles.menuHeader}>
-          <Text style={styles.menuTitle}>Navigation</Text>
-          <Pressable onPress={() => setMenuOpen(false)} style={styles.menuClose} accessibilityRole="button">
-            <Text style={styles.menuCloseText}>×</Text>
-          </Pressable>
-        </View>
-
-        {appScreens.map((screen) => {
-          const isActive = route.name === screen;
+      <View style={styles.headerNav}>
+        {bottomTabs.map((tab) => {
+          const isActive = route.name === tab.screen;
           return (
             <Pressable
-              key={screen}
-              onPress={() => navigation.navigate(screen)}
-              style={[styles.menuItem, isActive && styles.menuItemActive]}
+              key={tab.screen}
+              onPress={() => navigation.navigate(tab.screen)}
+              style={[styles.headerNavItem, isActive && styles.headerNavItemActive]}
             >
-              <Text style={[styles.menuItemText, isActive && styles.menuItemTextActive]}>{screenLabels[screen]}</Text>
+              <Text style={[styles.headerNavText, isActive && styles.headerNavTextActive]}>{tab.label}</Text>
             </Pressable>
           );
         })}
