@@ -44,51 +44,56 @@ IOT_STALE_MINUTES = 5
 @app.on_event("startup")
 def seed_data():
     db = next(get_db())
-    _migrate_incident_columns(db)
-    if db.query(models.WaterLevel).count() == 0:
-        seeds = [
-            models.WaterLevel(
-                location_name="Cagayan De Oro River",
-                current_level=8.0, max_level=10.0,
-                status="Danger", trend="Rising",
-            ),
-            models.WaterLevel(
-                location_name="Bigaan River",
-                current_level=4.1, max_level=8.0,
-                status="Normal", trend="Steady",
-            ),
-            models.WaterLevel(
-                location_name="Bitan-ag Creek",
-                current_level=7.0, max_level=10.0,
-                status="Warning", trend="Rising",
-            ),
-            models.WaterLevel(
-                location_name="Kauswagan Canal",
-                current_level=3.5, max_level=7.0,
-                status="Normal", trend="Falling",
-            ),
-            models.WaterLevel(
-                location_name="Taguanao Creek",
-                current_level=6.9, max_level=9.0,
-                status="Warning", trend="Steady",
-            ),
-            models.WaterLevel(
-                location_name="Iponan River",
-                current_level=9.2, max_level=10.5,
-                status="Danger", trend="Rising",
-            ),
-        ]
-        db.add_all(seeds)
-        db.commit()
+    try:
+        _migrate_incident_columns(db)
+        if db.query(models.WaterLevel).count() == 0:
+            seeds = [
+                models.WaterLevel(
+                    location_name="Cagayan De Oro River",
+                    current_level=8.0, max_level=10.0,
+                    status="Danger", trend="Rising",
+                ),
+                models.WaterLevel(
+                    location_name="Bigaan River",
+                    current_level=4.1, max_level=8.0,
+                    status="Normal", trend="Steady",
+                ),
+                models.WaterLevel(
+                    location_name="Bitan-ag Creek",
+                    current_level=7.0, max_level=10.0,
+                    status="Warning", trend="Rising",
+                ),
+                models.WaterLevel(
+                    location_name="Kauswagan Canal",
+                    current_level=3.5, max_level=7.0,
+                    status="Normal", trend="Falling",
+                ),
+                models.WaterLevel(
+                    location_name="Taguanao Creek",
+                    current_level=6.9, max_level=9.0,
+                    status="Warning", trend="Steady",
+                ),
+                models.WaterLevel(
+                    location_name="Iponan River",
+                    current_level=9.2, max_level=10.5,
+                    status="Danger", trend="Rising",
+                ),
+            ]
+            db.add_all(seeds)
+            db.commit()
 
-    if db.query(models.Alert).count() == 0:
-        db.add(models.Alert(
-            title="High Water Level",
-            message="Central Dam water level is approaching maximum capacity.",
-            type="danger",
-        ))
-        db.commit()
-    db.close()
+        if db.query(models.Alert).count() == 0:
+            db.add(models.Alert(
+                title="High Water Level",
+                message="Central Dam water level is approaching maximum capacity.",
+                type="danger",
+            ))
+            db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[startup-warning] Seed/migration skipped: {e}")
+    finally:
+        db.close()
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
