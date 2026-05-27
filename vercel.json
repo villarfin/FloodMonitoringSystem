@@ -1,24 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/dist"
-      }
-    },
-    {
-      "src": "fastapi_backend/app/main.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
-    }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "fastapi_backend/app/main.py" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/frontend/$1" }
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "fastapi_backend/app/main.py" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
