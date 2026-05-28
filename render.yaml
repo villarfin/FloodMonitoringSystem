@@ -1,0 +1,9 @@
+# render.yaml configuration for Render static site deployment
+services:
+  - type: static_site
+    name: flood-monitoring-frontend
+    env: node
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    # optional: custom domain can be added here
+    # domain: yourdomain.com
