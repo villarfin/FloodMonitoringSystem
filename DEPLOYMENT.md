@@ -27,6 +27,42 @@ VITE_API_BASE_URL=https://your-public-backend.example.com/api
 
 Do not use `127.0.0.1` or a LAN IP for production Vercel, because Vercel users and the hosted app cannot reach your laptop.
 
+## Render Backend
+
+This repo includes a `render.yaml` Blueprint that creates:
+
+- `flood-monitoring-api` Django web service
+- `flood-monitoring-db` PostgreSQL database
+
+In Render:
+
+1. Open `https://dashboard.render.com/blueprints`.
+2. Click **New Blueprint Instance**.
+3. Connect `https://github.com/villarfin/FloodMonitoringSystem`.
+4. Select the `main` branch.
+5. Apply the Blueprint.
+
+After the deploy finishes, your backend API will look like:
+
+```text
+https://flood-monitoring-api.onrender.com/api
+```
+
+Use the actual Render URL in Vercel:
+
+```text
+VITE_API_BASE_URL=https://flood-monitoring-api.onrender.com/api
+```
+
+And use the same backend for the Arduino serial forwarder:
+
+```powershell
+$env:IOT_SERVER_URL="https://flood-monitoring-api.onrender.com/api/iot/reading/"
+python arduino_serial_forwarder.py
+```
+
+Render free services can sleep after inactivity, so the first request after a pause may be slow.
+
 ## Mobile APK
 
 The APK must also use a reachable backend:
