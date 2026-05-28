@@ -87,7 +87,7 @@ These commands were initially not available in the current shell:
 - `gradle`
 - `adb`
 
-Node/npm and GitHub CLI were installed or found, but GitHub and Expo EAS still require login.
+Node/npm and GitHub CLI were installed or found, but GitHub CLI still requires login.
 
 ## Required Logins To Finish
 
@@ -101,7 +101,7 @@ Current status:
 
 - Vercel CLI is logged in as `villarfin`.
 - GitHub CLI is not logged in.
-- Expo EAS is not logged in.
+- Expo EAS is logged in as `zaneeymal`.
 
 ## Existing Vercel Projects
 

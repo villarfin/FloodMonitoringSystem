@@ -1,192 +1,130 @@
-# Backend Service
+# Flood Monitoring System
 
-This directory contains the Django + Django REST Framework backend for the project.
+Cloud-deployed flood monitoring system with a web dashboard, Django API backend, Arduino serial data forwarder, and Expo mobile app.
 
-## Location
+## Live Links
 
-Place this directory as `backend/` inside your main repository so it sits alongside the frontend and other services.
+- Web app: https://flood-monitoring-system2.vercel.app
+- Backend API health: https://flood-monitoring-api.onrender.com/api/health/
+- Mobile app source: https://github.com/villarfin/FloodMonitoringSystem/tree/main/mobile-app
+- Deployment notes: [DEPLOYMENT.md](DEPLOYMENT.md)
 
-## Setup
-
-1. Open PowerShell in `c:\Users\kylef\backend---DRF\backend`
-2. Create a virtual environment:
-   ```powershell
-   python -m venv .venv
-   ```
-3. Activate the virtual environment:
-   ```powershell
-   .\.venv\Scripts\Activate.ps1
-   ```
-   If PowerShell blocks execution, run:
-   ```powershell
-   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-   .\.venv\Scripts\Activate.ps1
-   ```
-4. Install project dependencies:
-   ```powershell
-   pip install -r requirements.txt
-   ```
-5. Run database migrations:
-   ```powershell
-   python manage.py migrate
-   ```
-6. Start the development server:
-   ```powershell
-   python manage.py runserver
-   ```
-
-The backend server will be available at:
+## Project Structure
 
 ```text
-http://127.0.0.1:8000/
+backend/                  Django + Django REST Framework API
+frontend/                 Vite React web dashboard
+mobile-app/               Expo React Native mobile app
+arduino_serial_forwarder.py
+render.yaml               Render backend/database blueprint
+vercel.json               Vercel web deployment config
+DEPLOYMENT.md             Deployment and login notes
 ```
 
-## API Tutorial
+## Deployment Status
 
-### 1. Register a user
+- Frontend is deployed on Vercel as `flood-monitoring-system2`.
+- Backend is deployed on Render as `flood-monitoring-api`.
+- Mobile APK builds are handled by Expo EAS under `@zaneeymal/flood-monitoring-apk`.
+- The APK uses the public Render backend URL through `EXPO_PUBLIC_API_BASE_URL`.
 
-Request:
+Latest in-progress EAS build:
 
-```http
-POST /api/register/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Type: application/json
-
-{
-  "username": "alice",
-  "email": "alice@example.com",
-  "password": "password123"
-}
+```text
+https://expo.dev/accounts/zaneeymal/projects/flood-monitoring-apk/builds/78fedfe7-b5cb-43d7-9308-4ef0bab29386
 ```
 
-Response:
+Previous finished APK:
 
-```json
-{
-  "user": {
-    "id": 1,
-    "username": "alice",
-    "email": "alice@example.com"
-  },
-  "token": "<your-token>"
-}
+```text
+https://expo.dev/artifacts/eas/pC15raX7Uaj933qU5KLpYJ.apk
 ```
 
-### 2. Login with the user
+## Local Development
 
-Request:
+### Backend
 
-```http
-POST /api/login/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Type: application/json
-
-{
-  "username": "alice",
-  "password": "password123"
-}
+```powershell
+cd backend
+python -m venv ..\.venv
+..\.venv\Scripts\Activate.ps1
+pip install -r ..\requirements.txt
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8000
 ```
 
-Response:
+Local API:
 
-```json
-{
-  "user": {
-    "id": 1,
-    "username": "alice",
-    "email": "alice@example.com"
-  },
-  "token": "<your-token>"
-}
+```text
+http://127.0.0.1:8000/api
 ```
 
-### 3. Use the token for authenticated requests
+### Frontend
 
-For protected endpoints, add this header:
-
-```http
-Authorization: Token <your-token>
+```powershell
+cd frontend
+npm install
+npm run dev
 ```
 
-### 4. List products
+Local web app:
 
-Request:
-
-```http
-GET /api/products/ HTTP/1.1
-Host: 127.0.0.1:8000
-Authorization: Token <your-token>
+```text
+http://127.0.0.1:5173/
 ```
 
-### 5. Create a product
+Use this environment variable for production Vercel:
 
-Request:
-
-```http
-POST /api/products/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Type: application/json
-Authorization: Token <your-token>
-
-{
-  "name": "Sample Product",
-  "description": "A demo product",
-  "price": "19.99"
-}
+```text
+VITE_API_BASE_URL=https://flood-monitoring-api.onrender.com/api
 ```
 
-Response:
+### Mobile App
 
-```json
-{
-  "id": 1,
-  "name": "Sample Product",
-  "description": "A demo product",
-  "price": "19.99",
-  "created_by": {
-    "id": 1,
-    "username": "alice",
-    "email": "alice@example.com"
-  },
-  "created_at": "2026-04-13T00:00:00Z"
-}
+```powershell
+cd mobile-app
+npm install
+npm run start
 ```
 
-## Example curl commands
+For local phone testing on the same Wi-Fi, use the laptop LAN IP:
 
-Register:
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/register/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "alice", "email": "alice@example.com", "password": "password123"}'
+```text
+EXPO_PUBLIC_API_BASE_URL=http://172.30.1.113:8000/api
 ```
 
-Login:
+For cloud APK builds, use:
 
-```bash
-curl -X POST http://127.0.0.1:8000/api/login/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "alice", "password": "password123"}'
+```text
+EXPO_PUBLIC_API_BASE_URL=https://flood-monitoring-api.onrender.com/api
 ```
 
-Create product:
+Build an Android APK:
 
-```bash
-curl -X POST http://127.0.0.1:8000/api/products/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Token <your-token>" \
-  -d '{"name": "Sample Product", "description": "A demo product", "price": "19.99"}'
+```powershell
+cd mobile-app
+npx eas-cli build --platform android --profile preview
 ```
 
-## API Endpoints
+## IoT Data Flow
 
-- `POST /api/register/` - register a new user
-- `POST /api/login/` - login and receive a token
-- `GET /api/products/` - list products (requires token auth)
-- `POST /api/products/` - create a product (requires token auth)
+The Arduino sends serial JSON over USB to the laptop. The laptop runs `arduino_serial_forwarder.py`, and that script posts readings to the backend API.
 
-## Notes
+For cloud backend posting:
 
-- The backend uses token authentication with Django REST Framework.
-- Use `backend/` as the working directory for all backend commands when this folder is inside a monorepo.
+```powershell
+$env:IOT_SERVER_URL="https://flood-monitoring-api.onrender.com/api/iot/reading/"
+python arduino_serial_forwarder.py
+```
+
+The cloud web and mobile apps can still open when the laptop is off, but live Arduino USB updates stop unless the serial forwarder is running.
+
+## Useful Checks
+
+```powershell
+npm run build
+cd mobile-app
+npx tsc --noEmit
+npx eas-cli build:list --platform android --limit 3
+```
+
