@@ -29,3 +29,4 @@ Thumbs.db
 # Logs and environment variables
 *.log
 .env
+.vercel
