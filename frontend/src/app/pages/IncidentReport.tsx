@@ -132,7 +132,7 @@ export function IncidentReport() {
         </label>
 
         <label className="app__form-field">
-          <span>Observed Water Level in Meters (Number)</span>
+          <span>Observed Water Level in Centimeters (Number)</span>
           <input
             type="number"
             min="0"
@@ -270,7 +270,7 @@ export function IncidentReport() {
           <p><strong>Email:</strong> {email}</p>
           <p><strong>Contact:</strong> {contactNumber}</p>
           <p><strong>Location:</strong> {selectedLocation?.locationName}</p>
-          <p><strong>Observed Water Level:</strong> {waterLevel}m</p>
+          <p><strong>Observed Water Level:</strong> {waterLevel}cm</p>
           <p><strong>Incident Type:</strong> {incidentType}</p>
           <p><strong>Urgency:</strong> {urgency}</p>
           <p><strong>Needs Rescue:</strong> {needsRescue ? "Yes" : "No"}</p>

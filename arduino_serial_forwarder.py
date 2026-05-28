@@ -6,6 +6,11 @@ import serial
 import serial.tools.list_ports
 import requests
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(line_buffering=True)
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(line_buffering=True)
+
 # ══════════════════════════════════════════════════════════════════════════════
 #  JSON SERIAL TO HTTP FORWARDER FOR ARDUINO MEGA
 # ══════════════════════════════════════════════════════════════════════════════
@@ -44,11 +49,12 @@ def find_arduino_port() -> str | None:
 #   -> Change 'localhost' to the local IP address of your server laptop (e.g., '192.168.1.150').
 # If the Arduino is plugged DIRECTLY into the server laptop:
 #   -> Keep 'localhost'.
-SERVER_URL = "http://localhost:8001/api/iot/reading/"
-API_KEY = "flood-iot-secret-2026"
+SERVER_URL = os.environ.get("IOT_SERVER_URL", "http://127.0.0.1:8000/api/iot/reading/")
+API_KEY = os.environ.get("IOT_API_KEY", "flood-iot-secret-2026")
 
 # 3. 🌊 Location Configuration
 LOCATION_NAME = "Cagayan De Oro River"
+MAX_LEVEL_CM = float(os.environ.get("IOT_MAX_LEVEL_CM", "14.0"))
 
 def map_status(arduino_status):
     """
@@ -128,15 +134,16 @@ def main():
                 payload = {
                     "location_name": LOCATION_NAME,
                     "current_level": current_level,
+                    "max_level": MAX_LEVEL_CM,
                     "status": status,
                     "trend": trend,
                     "api_key": API_KEY
                 }
 
                 # Forward to FastAPI Server
-                print(f"[Forwarding] Forwarding to server -> Level: {current_level}m, Status: {status}, Trend: {trend}...")
+                print(f"[Forwarding] Forwarding to server -> Level: {current_level}cm, Status: {status}, Trend: {trend}...")
                 headers = {"Content-Type": "application/json"}
-                response = requests.post(SERVER_URL, json=payload, headers=headers)
+                response = requests.post(SERVER_URL, json=payload, headers=headers, timeout=10)
 
                 if response.status_code == 201:
                     print(f"[SUCCESS] Server logged: {response.json()}")

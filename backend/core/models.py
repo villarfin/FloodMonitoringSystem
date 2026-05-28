@@ -64,6 +64,20 @@ class WaterLevel(models.Model):
         return f"{self.location_name} - {self.current_level}m"
 
 
+class IoTReading(models.Model):
+    location_name = models.CharField(max_length=255)
+    current_level = models.DecimalField(max_digits=6, decimal_places=2)
+    status = models.CharField(max_length=10)
+    trend = models.CharField(max_length=10)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-timestamp"]
+
+    def __str__(self):
+        return f"{self.location_name} - {self.current_level}m @ {self.timestamp}"
+
+
 class IncidentReport(models.Model):
     reporter_name = models.CharField(max_length=255)
     incident_type = models.CharField(max_length=255)

@@ -1,11 +1,8 @@
 {
-  "version": 3,
-  "build": {
-    "env": {},
-    "command": "npm run build --prefix frontend",
-    "outputDirectory": "frontend/dist"
-  },
-  "routes": [
-    { "src": "/(.*)", "dest": "frontend/$1" }
+  "installCommand": "npm ci --prefix frontend",
+  "buildCommand": "npm run build --prefix frontend",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

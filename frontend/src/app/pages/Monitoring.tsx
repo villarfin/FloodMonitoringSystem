@@ -198,15 +198,15 @@ export function Monitoring() {
                 <div className="app__monitor-stat-grid">
                   <article className="app__monitor-stat-card">
                     <span className="app__monitor-stat-label">Current Level</span>
-                    <strong>{selectedWater.currentLevel.toFixed(1)} m</strong>
+                    <strong>{selectedWater.currentLevel.toFixed(1)} cm</strong>
                   </article>
                   <article className="app__monitor-stat-card">
                     <span className="app__monitor-stat-label">Highest in 24h</span>
-                    <strong>{highestReading?.level.toFixed(1)} m</strong>
+                    <strong>{highestReading?.level.toFixed(1)} cm</strong>
                   </article>
                   <article className="app__monitor-stat-card">
                     <span className="app__monitor-stat-label">24h Average</span>
-                    <strong>{averageLevel.toFixed(1)} m</strong>
+                    <strong>{averageLevel.toFixed(1)} cm</strong>
                   </article>
                   <article className="app__monitor-stat-card">
                     <span className="app__monitor-stat-label">Sensor ID</span>
@@ -219,7 +219,7 @@ export function Monitoring() {
                   <p><strong>Status:</strong> {selectedWater.status}</p>
                   <p><strong>Trend:</strong> {selectedWater.trend}</p>
                   <p><strong>Last Updated:</strong> {selectedWater.lastUpdated}</p>
-                  <p><strong>Design Max:</strong> {selectedWater.maxLevel.toFixed(1)} m</p>
+                  <p><strong>Design Max:</strong> {selectedWater.maxLevel.toFixed(1)} cm</p>
                   <p>
                     <strong>Peak Timestamp:</strong>{" "}
                     {highestReading
@@ -266,11 +266,11 @@ export function Monitoring() {
                       <XAxis dataKey="timeLabel" tick={{ fontSize: 12, fill: "#475569" }} />
                       <YAxis
                           tick={{ fontSize: 12, fill: "#475569" }}
-                          unit="m"
+                          unit="cm"
                           domain={[0, Math.ceil(selectedWater.maxLevel + 1)]}
                       />
                       <Tooltip
-                        formatter={(value: number) => [`${value.toFixed(1)} m`, "Water level"]}
+                        formatter={(value: number) => [`${value.toFixed(1)} cm`, "Water level"]}
                         labelFormatter={(label, payload) =>
                           payload?.[0]?.payload?.fullLabel ?? label
                         }
@@ -296,10 +296,10 @@ export function Monitoring() {
 
                 <div className="app__monitor-chart-footer">
                   <p>
-                    <strong>Current:</strong> {selectedWater.currentLevel.toFixed(1)} m
+                    <strong>Current:</strong> {selectedWater.currentLevel.toFixed(1)} cm
                   </p>
                   <p>
-                    <strong>Peak:</strong> {highestReading?.level.toFixed(1)} m in the last 24 hours
+                    <strong>Peak:</strong> {highestReading?.level.toFixed(1)} cm in the last 24 hours
                   </p>
                 </div>
               </section>

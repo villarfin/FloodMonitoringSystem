@@ -36,8 +36,8 @@ export function Dashboard() {
   const alertsSectionRef = useRef<HTMLElement | null>(null);
 
   const featuredWaters = waters.slice(0, 3);
-  const safeCount = waters.filter((item) => item.status === "Safe" || item.status === "Normal").length;
-  const alertCount = waters.filter((item) => item.status !== "Safe" && item.status !== "Normal").length;
+  const safeCount = waters.filter((item) => item.status === "Safe").length;
+  const alertCount = waters.filter((item) => item.status !== "Safe").length;
 
   const stats = [
     {

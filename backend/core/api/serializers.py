@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
-from core.models import Product, Alert, WaterLevel, IncidentReport
+from core.models import Product, Alert, WaterLevel, IncidentReport, IoTReading
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -67,6 +67,15 @@ class WaterLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaterLevel
         fields = ("id", "locationName", "currentLevel", "maxLevel", "status", "trend", "lastUpdated")
+
+
+class IoTReadingSerializer(serializers.ModelSerializer):
+    locationName = serializers.CharField(source="location_name", read_only=True)
+    currentLevel = serializers.DecimalField(source="current_level", max_digits=6, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = IoTReading
+        fields = ("id", "locationName", "currentLevel", "status", "trend", "timestamp")
 
 
 class IncidentReportSerializer(serializers.ModelSerializer):

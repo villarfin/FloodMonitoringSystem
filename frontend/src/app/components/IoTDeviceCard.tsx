@@ -107,7 +107,7 @@ export function IoTDeviceCard({ reading, loading, lastRefreshed }: IoTDeviceCard
         <div className="iot-card__metric">
           <span className="iot-card__metric-label">Water Level</span>
           <span className="iot-card__metric-value iot-card__metric-value--level">
-            {isNaN(level) ? reading.currentLevel : `${level.toFixed(1)} m`}
+            {isNaN(level) ? reading.currentLevel : `${level.toFixed(1)} cm`}
           </span>
         </div>
 

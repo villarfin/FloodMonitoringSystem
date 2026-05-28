@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { API_BASE_URL } from "../apiConfig";
-import { ActiveAlert } from "../data/activeAlerts";
+import { ActiveAlert, activeAlerts } from "../data/activeAlerts";
 
 export function useAlerts(pollMs = 2500) {
-  const [alerts, setAlerts] = useState<ActiveAlert[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [alerts, setAlerts] = useState<ActiveAlert[]>(activeAlerts);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export function useAlerts(pollMs = 2500) {
         const response = await fetch(`${API_BASE_URL}/alerts/`);
         if (!response.ok) throw new Error("Failed to fetch alerts");
         const data = await response.json();
-        setAlerts(data);
+        setAlerts(Array.isArray(data) && data.length > 0 ? data : activeAlerts);
         setError(null);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to fetch alerts");

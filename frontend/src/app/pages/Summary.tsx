@@ -51,7 +51,7 @@ export function Summary() {
         <div className="summary__iot-panel">
           <h3>Latest Arduino reading</h3>
           <p>
-            <strong>{reading.locationName}</strong> — {reading.currentLevel}m · {reading.status} ·{" "}
+            <strong>{reading.locationName}</strong> — {reading.currentLevel}cm · {reading.status} ·{" "}
             {reading.trend}
           </p>
         </div>
@@ -63,7 +63,7 @@ export function Summary() {
           {waters.map((w) => (
             <li key={w.id} className={`summary__station summary__station--${w.status.toLowerCase()}`}>
               <span>{w.locationName}</span>
-              <span>{w.currentLevel.toFixed(1)}m / {w.maxLevel.toFixed(1)}m</span>
+              <span>{w.currentLevel.toFixed(1)}cm / {w.maxLevel.toFixed(1)}cm</span>
               <span>{w.status}</span>
             </li>
           ))}

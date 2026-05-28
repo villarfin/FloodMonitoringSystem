@@ -6,8 +6,11 @@ import "../styles/pages/Configuration.css";
 export function Configuration() {
   const { health, error } = useHealth();
 
-  const warningPct = health ? Math.round(health.thresholds.warningPct * 100) : 70;
-  const dangerPct = health ? Math.round(health.thresholds.dangerPct * 100) : 90;
+  const unit = health?.thresholds.unit ?? "cm";
+  const maxLevel = health?.thresholds.maxLevel ?? 14;
+  const safeBelow = health?.thresholds.safeBelow ?? 6;
+  const warningFrom = health?.thresholds.warningFrom ?? 6;
+  const dangerFrom = health?.thresholds.dangerFrom ?? 10;
 
   return (
     <section className="app__section config">
@@ -19,9 +22,10 @@ export function Configuration() {
           <h3>Alert thresholds</h3>
           <p>Water level status is computed automatically when Arduino data is ingested:</p>
           <ul className="config__list">
-            <li><strong>Safe (Normal):</strong> below {warningPct}% of max level</li>
-            <li><strong>Warning:</strong> {warningPct}% – {dangerPct}% of max level</li>
-            <li><strong>Danger:</strong> at or above {dangerPct}% of max level</li>
+            <li><strong>Prototype max:</strong> {maxLevel}{unit}</li>
+            <li><strong>Safe (Normal):</strong> below {safeBelow}{unit}</li>
+            <li><strong>Warning:</strong> {warningFrom}{unit} to below {dangerFrom}{unit}</li>
+            <li><strong>Danger:</strong> at or above {dangerFrom}{unit}</li>
           </ul>
           <p className="config__hint">Danger alerts are deduplicated every 15 minutes per location.</p>
         </article>

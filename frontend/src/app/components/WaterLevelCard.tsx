@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Badge } from "./ui/badge";
+import { MobileCard } from "./MobileCard";
+import { StatusBadge } from "./StatusBadge";
 import "../styles/components/WaterLevelCard.css";
 
 export interface ArduinoMonitorProps {
@@ -55,12 +56,11 @@ export function WaterLevelCard({
         ? "danger"
         : "safe";
 
-  const badgeClass = `water-level-card__badge water-level-card__badge--${statusVariant}`;
   const fillClass = `water-level-card__progress-fill water-level-card__progress-fill--${statusVariant}`;
   const trend = arduinoMonitor?.trend ? trendArrow(arduinoMonitor.trend) : null;
 
   return (
-    <Card className={arduinoMonitor ? "water-level-card--arduino" : undefined}>
+    <MobileCard className={arduinoMonitor ? "water-level-card--arduino" : undefined}>
       <CardHeader>
         <div className="water-level-card__header-row">
           <div className="water-level-card__title-block">
@@ -76,16 +76,16 @@ export function WaterLevelCard({
                 Live
               </span>
             )}
-            <Badge className={badgeClass}>{status}</Badge>
+            <StatusBadge status={status} />
           </div>
         </div>
       </CardHeader>
       <CardContent>
         {/* Water level numbers */}
         <div className="water-level-card__body">
-          <p className="water-level-card__level">{currentLevel}m</p>
+          <p className="water-level-card__level">{currentLevel}cm</p>
           <p className="water-level-card__max-level">
-            Max Level: {maxLevel}m
+            Max Level: {maxLevel}cm
           </p>
 
           {/* Progress bar showing water level */}
@@ -131,7 +131,7 @@ export function WaterLevelCard({
           )}
         </div>
       </CardContent>
-    </Card>
+    </MobileCard>
   );
 }
 

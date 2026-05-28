@@ -5,6 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-replace-me")
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
+IOT_API_KEY = os.environ.get("IOT_API_KEY", "flood-iot-secret-2026")
 
 INSTALLED_APPS = [
     "django.contrib.admin",

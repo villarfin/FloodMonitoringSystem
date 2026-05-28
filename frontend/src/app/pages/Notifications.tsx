@@ -73,7 +73,7 @@ export function Notifications() {
       .map((w) => ({
         id: `water-${w.id}`,
         title: `${w.status} at ${w.locationName}`,
-        message: `Current level ${w.currentLevel.toFixed(1)}m (${w.trend} trend). Max capacity ${w.maxLevel.toFixed(1)}m.`,
+        message: `Current level ${w.currentLevel.toFixed(1)}cm (${w.trend} trend). Max capacity ${w.maxLevel.toFixed(1)}cm.`,
         type: "Flood" as NotificationType,
         source: "River Sensor" as NotificationSource,
         station: w.sensorId,

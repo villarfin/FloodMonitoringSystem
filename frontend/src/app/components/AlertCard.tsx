@@ -1,8 +1,9 @@
 ﻿// Simple Alert Card Component
 // Shows one alert message
 
-import { Card, CardContent } from "./ui/card";
+import { CardContent } from "./ui/card";
 import { AlertCircle } from "lucide-react";
+import { MobileCard } from "./MobileCard";
 import "../styles/components/AlertCard.css";
 
 // Props that this component receives
@@ -17,7 +18,7 @@ export function AlertCard({ title, message, type }: AlertCardProps) {
     type === "warning" ? "warning" : type === "danger" ? "danger" : "info";
 
   return (
-    <Card className={`alert-card alert-card--${variant}`}>
+    <MobileCard className={`alert-card alert-card--${variant}`}>
       <CardContent className="alert-card__content">
         <div className="alert-card__row">
           {/* Alert icon */}
@@ -30,7 +31,7 @@ export function AlertCard({ title, message, type }: AlertCardProps) {
           </div>
         </div>
       </CardContent>
-    </Card>
+    </MobileCard>
   );
 }
 

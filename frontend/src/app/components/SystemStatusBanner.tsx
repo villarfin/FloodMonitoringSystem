@@ -19,7 +19,7 @@ export function SystemStatusBanner({ health, apiError }: SystemStatusBannerProps
   if (apiError) {
     return (
       <div className="system-banner system-banner--error" role="status">
-        <strong>API offline</strong> — {apiError}. Start the FastAPI backend on port 8001.
+        <strong>API offline</strong> — {apiError}. Start the FastAPI backend on port 8000.
       </div>
     );
   }

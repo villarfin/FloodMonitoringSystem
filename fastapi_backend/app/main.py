@@ -33,9 +33,10 @@ app.add_middleware(
 # Simple API key for the IoT device – change this for production!
 IOT_API_KEY = "flood-iot-secret-2026"
 
-# Thresholds as % of max_level (used when ingesting IoT readings)
-THRESHOLD_WARNING_PCT = 0.70
-THRESHOLD_DANGER_PCT = 0.90
+# Prototype thresholds in centimeters (matches Arduino sketch).
+PROTOTYPE_MAX_LEVEL_CM = 14.0
+THRESHOLD_WARNING_CM = 6.0
+THRESHOLD_DANGER_CM = 10.0
 ALERT_DEDUP_MINUTES = 15
 IOT_STALE_MINUTES = 5
 
@@ -115,12 +116,9 @@ def _migrate_incident_columns(db: Session) -> None:
 
 
 def compute_status_from_level(current_level: float, max_level: float) -> str:
-    if max_level <= 0:
-        return "Normal"
-    ratio = current_level / max_level
-    if ratio >= THRESHOLD_DANGER_PCT:
+    if current_level >= THRESHOLD_DANGER_CM:
         return "Danger"
-    if ratio >= THRESHOLD_WARNING_PCT:
+    if current_level >= THRESHOLD_WARNING_CM:
         return "Warning"
     return "Normal"
 
@@ -223,8 +221,11 @@ def health_check(db: Session = Depends(get_db)):
         "latestIotLocation": latest_iot.location_name if latest_iot else None,
         "iotStale": iot_stale,
         "thresholds": {
-            "warningPct": THRESHOLD_WARNING_PCT,
-            "dangerPct": THRESHOLD_DANGER_PCT,
+            "unit": "cm",
+            "maxLevel": PROTOTYPE_MAX_LEVEL_CM,
+            "safeBelow": THRESHOLD_WARNING_CM,
+            "warningFrom": THRESHOLD_WARNING_CM,
+            "dangerFrom": THRESHOLD_DANGER_CM,
         },
     }
 
@@ -355,7 +356,7 @@ def iot_push_reading(payload: schemas.IoTReadingCreate, db: Session = Depends(ge
     Endpoint for the IoT hardware sensor to push water-level data.
 
     Example curl from the device:
-        curl -X POST http://<server>:8001/api/iot/reading/ \\
+        curl -X POST http://<server>:8000/api/iot/reading/ \\
              -H "Content-Type: application/json" \\
              -d '{"location_name":"Cagayan De Oro River","current_level":8.5,
                   "status":"Danger","trend":"Rising","api_key":"flood-iot-secret-2026"}'
@@ -370,7 +371,7 @@ def iot_push_reading(payload: schemas.IoTReadingCreate, db: Session = Depends(ge
         .filter(models.WaterLevel.location_name == payload.location_name)
         .first()
     )
-    max_level = (water.max_level if water else None) or payload.max_level or 10.0
+    max_level = (water.max_level if water else None) or payload.max_level or PROTOTYPE_MAX_LEVEL_CM
     computed_status = compute_status_from_level(payload.current_level, max_level)
 
     # 1. Log the raw reading
@@ -404,7 +405,7 @@ def iot_push_reading(payload: schemas.IoTReadingCreate, db: Session = Depends(ge
         db.add(models.Alert(
             title=f"IoT Danger – {payload.location_name}",
             message=(
-                f"Sensor reading {payload.current_level:.2f}m ({pct}% of max, {payload.trend}). "
+                f"Sensor reading {payload.current_level:.2f}cm ({pct}% of 14cm prototype max, {payload.trend}). "
                 "Automated alert."
             ),
             type="danger",

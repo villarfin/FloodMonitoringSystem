@@ -10,7 +10,15 @@ export interface HealthStatus {
   latestIotAt: string | null;
   latestIotLocation: string | null;
   iotStale: boolean;
-  thresholds: { warningPct: number; dangerPct: number };
+  thresholds: {
+    unit?: string;
+    maxLevel?: number;
+    safeBelow?: number;
+    warningFrom?: number;
+    dangerFrom?: number;
+    warningPct?: number;
+    dangerPct?: number;
+  };
 }
 
 export function useHealth(pollMs = 10000) {

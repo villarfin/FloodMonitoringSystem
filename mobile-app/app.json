@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Flood Monitoring",
+    "slug": "flood-monitoring-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0f766e"
+    },
+    "android": {
+      "package": "com.floodmonitoring.mobile",
+      "permissions": [
+        "INTERNET"
+      ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "replace-after-eas-init"
+      }
+    }
+  }
+}

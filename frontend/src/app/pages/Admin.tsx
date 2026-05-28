@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { API_BASE_URL } from "../apiConfig";
 import { exportToCsv } from "../utils/exportCsv";
 import "../styles/pages/Admin.css";
@@ -29,26 +29,35 @@ export function Admin() {
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [iotReadings, setIotReadings] = useState<IoTRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [lastIoTRefresh, setLastIoTRefresh] = useState<Date | null>(null);
 
   // ── fetch helpers ──────────────────────────────────────────────────────
-  const fetchWaters = () => fetch(`${API_BASE_URL}/water-levels/`).then(r => r.json()).then(setWaters);
+  const noCache = { cache: "no-store" as RequestCache };
+  const fetchWaters = useCallback(() => fetch(`${API_BASE_URL}/water-levels/?_=${Date.now()}`, noCache).then(r => r.json()).then(setWaters), []);
   const fetchAlerts = () => fetch(`${API_BASE_URL}/alerts/`).then(r => r.json()).then(setAlerts);
   const fetchReports = () => fetch(`${API_BASE_URL}/reports/`).then(r => r.json()).then(setReports);
-  const fetchIoT = () => fetch(`${API_BASE_URL}/iot/readings/`).then(r => r.json()).then(setIotReadings);
+  const fetchIoT = useCallback(() =>
+    fetch(`${API_BASE_URL}/iot/readings/?limit=100&_=${Date.now()}`, noCache)
+      .then(r => r.json())
+      .then((rows) => {
+        setIotReadings(rows);
+        setLastIoTRefresh(new Date());
+      }),
+  []);
 
   useEffect(() => {
     setLoading(true);
     Promise.all([fetchWaters(), fetchAlerts(), fetchReports(), fetchIoT()]).finally(() => setLoading(false));
-  }, []);
+  }, [fetchIoT, fetchWaters]);
 
   // Auto-refresh IoT readings every 2.5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchIoT();
-      fetchWaters();
+      void fetchIoT();
+      void fetchWaters();
     }, 2500);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchIoT, fetchWaters]);
 
   // ── delete helpers ─────────────────────────────────────────────────────
   const deleteItem = async (endpoint: string, id: number, refresh: () => Promise<void>) => {
@@ -147,8 +156,8 @@ export function Admin() {
           {/* Add form */}
           <div className="admin__form-row">
             <input placeholder="Location Name" value={wForm.location_name} onChange={e => setWForm({ ...wForm, location_name: e.target.value })} />
-            <input placeholder="Current (m)" type="number" step="0.1" value={wForm.current_level} onChange={e => setWForm({ ...wForm, current_level: e.target.value })} />
-            <input placeholder="Max (m)" type="number" step="0.1" value={wForm.max_level} onChange={e => setWForm({ ...wForm, max_level: e.target.value })} />
+            <input placeholder="Current (cm)" type="number" step="0.1" value={wForm.current_level} onChange={e => setWForm({ ...wForm, current_level: e.target.value })} />
+            <input placeholder="Max (cm)" type="number" step="0.1" value={wForm.max_level} onChange={e => setWForm({ ...wForm, max_level: e.target.value })} />
             <select value={wForm.status} onChange={e => setWForm({ ...wForm, status: e.target.value })}>
               <option>Normal</option><option>Warning</option><option>Danger</option>
             </select>
@@ -162,7 +171,7 @@ export function Admin() {
             <table className="admin__table">
               <thead>
                 <tr>
-                  <th>ID</th><th>Location</th><th>Level (m)</th><th>Max (m)</th><th>Status</th><th>Trend</th><th>Updated</th><th></th>
+                  <th>ID</th><th>Location</th><th>Level (cm)</th><th>Max (cm)</th><th>Status</th><th>Trend</th><th>Updated</th><th></th>
                 </tr>
               </thead>
               <tbody>
@@ -244,7 +253,7 @@ export function Admin() {
                     <td>{r.reporterName}</td>
                     <td>{r.email || "—"}</td>
                     <td>{r.urgency || "—"}</td>
-                    <td className="admin__mono">{r.observedLevel != null ? `${r.observedLevel}m` : "—"}</td>
+                    <td className="admin__mono">{r.observedLevel != null ? `${r.observedLevel}cm` : "—"}</td>
                     <td>{r.incidentType}</td>
                     <td>{r.location}</td>
                     <td className="admin__date">{formatDate(r.createdAt)}</td>
@@ -264,6 +273,9 @@ export function Admin() {
             <h3>📡 IoT Device Feed ({iotReadings.length} readings)</h3>
             <span className="admin__live-dot" />
             <span className="admin__live-label">LIVE – auto-refreshing every 2.5s</span>
+            <span className="admin__live-label">
+              Last checked: {lastIoTRefresh ? lastIoTRefresh.toLocaleTimeString() : "—"}
+            </span>
           </div>
 
           <div className="admin__iot-info">
@@ -280,7 +292,7 @@ export function Admin() {
           <div className="admin__table-wrap">
             <table className="admin__table">
               <thead>
-                <tr><th>ID</th><th>Location</th><th>Level (m)</th><th>Status</th><th>Trend</th><th>Timestamp</th></tr>
+                <tr><th>ID</th><th>Location</th><th>Level (cm)</th><th>Status</th><th>Trend</th><th>Timestamp</th></tr>
               </thead>
               <tbody>
                 {iotReadings.length === 0 && (
