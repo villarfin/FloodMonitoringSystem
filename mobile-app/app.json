@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Flood Monitoring",
-    "slug": "flood-monitoring-mobile",
+    "slug": "flood-monitoring-apk",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -16,8 +16,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "replace-after-eas-init"
+        "projectId": "2d36a734-d517-469f-b235-e84215a356e2"
       }
-    }
+    },
+    "owner": "zaneeymal"
   }
 }
