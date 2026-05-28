@@ -1,9 +1,11 @@
 {
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/dist",
-  "framework": null,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "fastapi_backend/app/main.py" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "version": 3,
+  "build": {
+    "env": {},
+    "command": "npm run build --prefix frontend",
+    "outputDirectory": "frontend/dist"
+  },
+  "routes": [
+    { "src": "/(.*)", "dest": "frontend/$1" }
   ]
 }

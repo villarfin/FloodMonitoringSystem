@@ -1,0 +1,11 @@
+{
+  "name": "flood-monitoring-root",
+  "private": true,
+  "scripts": {
+    "install": "npm ci --prefix frontend",
+    "build": "npm run build --prefix frontend"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
