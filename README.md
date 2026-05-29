@@ -119,6 +119,8 @@ python arduino_serial_forwarder.py
 
 The cloud web and mobile apps can still open when the laptop is off, but live Arduino USB updates stop unless the serial forwarder is running.
 
+If the Arduino USB cable is unplugged and plugged back in, keep the forwarder running. It will scan for the Arduino again and reconnect automatically. If the port is busy, close Arduino IDE Serial Monitor and rerun the forwarder.
+
 ## Useful Checks
 
 ```powershell
@@ -127,4 +129,3 @@ cd mobile-app
 npx tsc --noEmit
 npx eas-cli build:list --platform android --limit 3
 ```
-

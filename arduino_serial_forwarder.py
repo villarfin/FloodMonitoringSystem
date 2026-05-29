@@ -3,6 +3,7 @@ import sys
 import time
 import json
 import serial
+import serial.serialutil
 import serial.tools.list_ports
 import requests
 
@@ -28,6 +29,7 @@ if hasattr(sys.stderr, "reconfigure"):
 # On Mac/Linux use /dev/ttyACM0 or /dev/tty.usbmodem*
 SERIAL_PORT = os.environ.get("ARDUINO_PORT", "")
 BAUD_RATE = 9600
+RECONNECT_DELAY_SECONDS = 2
 
 
 def find_arduino_port() -> str | None:
@@ -43,6 +45,27 @@ def find_arduino_port() -> str | None:
         elif "usb" in desc or "2341" in hwid:  # 2341 = Arduino VID
             preferred.append(port.device)
     return preferred[0] if preferred else None
+
+
+def open_serial_connection() -> serial.Serial | None:
+    """Open the configured Arduino serial port, or auto-detect it."""
+    port = SERIAL_PORT or find_arduino_port()
+    if not port:
+        print("[ERROR] No Arduino serial port found.")
+        print("[TIP] Plug in the board, close Arduino IDE Serial Monitor, then run:")
+        print('       set ARDUINO_PORT=COM7  (use your port from Device Manager)')
+        return None
+
+    print(f"Connecting to Arduino Mega on {port} @ {BAUD_RATE} baud...")
+    try:
+        ser = serial.Serial(port, BAUD_RATE, timeout=2)
+        time.sleep(2) # Give the Arduino Mega 2 seconds to reset after connection
+        print("[+] Connected successfully! Listening for JSON sensor data...")
+        return ser
+    except Exception as e:
+        print(f"[ERROR] Could not open serial port {port}. Details: {e}")
+        print("[TIP] Make sure the Arduino IDE Serial Monitor is CLOSED before running this script!")
+        return None
 
 # 2. 📡 Server Configuration
 # If the Arduino is connected to a DIFFERENT laptop:
@@ -73,27 +96,17 @@ def map_status(arduino_status):
     return "Normal" # Fallback default
 
 def main():
-    port = SERIAL_PORT or find_arduino_port()
-    if not port:
-        print("[ERROR] No Arduino serial port found.")
-        print("[TIP] Plug in the board, close Arduino IDE Serial Monitor, then run:")
-        print('       set ARDUINO_PORT=COM7  (use your port from Device Manager)')
-        sys.exit(1)
-
-    print(f"Connecting to Arduino Mega on {port} @ {BAUD_RATE} baud...")
-    try:
-        ser = serial.Serial(port, BAUD_RATE, timeout=2)
-        time.sleep(2) # Give the Arduino Mega 2 seconds to reset after connection
-        print("[+] Connected successfully! Listening for JSON sensor data...")
-    except Exception as e:
-        print(f"[ERROR] Could not open serial port {port}. Details: {e}")
-        print("[TIP] Make sure the Arduino IDE Serial Monitor is CLOSED before running this script!")
-        return
-
+    ser = open_serial_connection()
     last_level = None
 
     while True:
         try:
+            if ser is None or not ser.is_open:
+                print(f"[RECONNECT] Waiting {RECONNECT_DELAY_SECONDS}s before scanning for Arduino...")
+                time.sleep(RECONNECT_DELAY_SECONDS)
+                ser = open_serial_connection()
+                continue
+
             if ser.in_waiting > 0:
                 # Read the line printed by Arduino Mega (e.g. '{"distance": 10.50, "waterLevel": 3.50, "status": "SAFE"}\r\n')
                 raw_line = ser.readline().decode('utf-8', errors='ignore').strip()
@@ -152,10 +165,29 @@ def main():
 
         except KeyboardInterrupt:
             print("\nShutting down forwarder...")
-            ser.close()
+            if ser is not None and ser.is_open:
+                ser.close()
             break
+        except serial.serialutil.SerialException as e:
+            print(f"[SERIAL ERROR] Arduino connection lost: {e}")
+            if ser is not None:
+                try:
+                    ser.close()
+                except Exception:
+                    pass
+            ser = None
+            last_level = None
         except Exception as e:
             print(f"[ERROR] Error reading/forwarding data: {e}")
+            if "ClearCommError" in str(e):
+                print("[SERIAL ERROR] Arduino connection appears to be disconnected. Reconnecting...")
+                if ser is not None:
+                    try:
+                        ser.close()
+                    except Exception:
+                        pass
+                ser = None
+                last_level = None
             time.sleep(2)
 
         time.sleep(0.1)
